@@ -251,6 +251,24 @@
               </span>
               <span class="text-stone-500">ARCHIVE CLOCK // <span id="terminal-clock">00:00:00</span> IST</span>
             </div>
+            <!-- Audio / Noir BGM Toggle Button -->
+            <button
+              id="sound-toggle-btn"
+              class="flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-stone-800 border border-[#D97706]/60 text-xs font-jetbrains text-[#D97706] transition cursor-pointer"
+              title="Toggle Crime Noir Audio"
+            >
+              <svg id="sound-icon-on" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              </svg>
+              <svg id="sound-icon-off" class="hidden w-3.5 h-3.5 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <line x1="22" y1="9" x2="16" y2="15"/>
+                <line x1="16" y1="9" x2="22" y2="15"/>
+              </svg>
+              <span id="sound-toggle-label" class="hidden sm:inline tracking-wider">AUDIO: ON</span>
+            </button>
             <button
               id="lock-file-btn"
               class="flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-[#991B1B] border border-stone-600 hover:border-[#991B1B] text-xs font-jetbrains text-stone-300 hover:text-white transition cursor-pointer"
@@ -933,6 +951,220 @@
     let activeTab = 'evidence';
     let isLockerUnlocked = false;
 
+    // --- CRIME NOIR AUDIO & HAPTIC VIBRATION ENGINE (WEB AUDIO API) ---
+    const SoundFX = (() => {
+      let ctx = null;
+      let isMuted = false;
+      let ambientInterval = null;
+      let ambientStep = 0;
+
+      function getCtx() {
+        try {
+          if (!ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) ctx = new AudioCtx();
+          }
+          if (ctx && ctx.state === 'suspended') {
+            ctx.resume();
+          }
+          return ctx;
+        } catch (err) {
+          return null;
+        }
+      }
+
+      // Safe Haptic Vibration Helper
+      function vibrate(pattern) {
+        try {
+          if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+            navigator.vibrate(pattern);
+          }
+        } catch (err) {
+          // Ignore on unsupported devices
+        }
+      }
+
+      // Play a synthesized tone with envelope
+      function playTone(freq, duration, type = 'sine', volume = 0.12, delay = 0, slideTo = null) {
+        if (isMuted) return;
+        const audio = getCtx();
+        if (!audio) return;
+
+        try {
+          const now = audio.currentTime + delay;
+          const osc = audio.createOscillator();
+          const gain = audio.createGain();
+
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, now);
+          if (slideTo) {
+            osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
+          }
+
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.linearRampToValueAtTime(volume, now + 0.015);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+          osc.connect(gain);
+          gain.connect(audio.destination);
+
+          osc.start(now);
+          osc.stop(now + duration + 0.02);
+        } catch (err) {
+          // Ignore audio context errors
+        }
+      }
+
+      // Short filtered noise burst for paper rustle / typewriter feel
+      function playNoise(duration = 0.08, volume = 0.07, filterFreq = 900) {
+        if (isMuted) return;
+        const audio = getCtx();
+        if (!audio) return;
+
+        try {
+          const bufferSize = Math.floor(audio.sampleRate * duration);
+          const buffer = audio.createBuffer(1, bufferSize, audio.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.4));
+          }
+
+          const noise = audio.createBufferSource();
+          noise.buffer = buffer;
+
+          const filter = audio.createBiquadFilter();
+          filter.type = 'bandpass';
+          filter.frequency.value = filterFreq;
+
+          const gain = audio.createGain();
+          gain.gain.value = volume;
+
+          noise.connect(filter);
+          filter.connect(gain);
+          gain.connect(audio.destination);
+          noise.start();
+        } catch (err) {
+          // Ignore noise errors
+        }
+      }
+
+      // Subtle 1990s Detective Noir Suspense Ambient Loop (D Minor)
+      function startAmbient() {
+        stopAmbient();
+        if (isMuted) return;
+        const bassPattern = [73.42, 73.42, 87.31, 65.41, 73.42, 69.30, 82.41, 55.00]; // D2, F2, C2, C#2, E2, A1
+        const eerieNotes = [293.66, 349.23, 329.63, 277.18, 220.00]; // D4, F4, E4, C#4, A3
+
+        const playPulse = () => {
+          if (isMuted) return;
+          const bass = bassPattern[ambientStep % bassPattern.length];
+          // Low brooding noir heartbeat bass
+          playTone(bass, 1.4, 'triangle', 0.045, 0);
+          playTone(bass * 2, 0.9, 'sine', 0.018, 0.05);
+
+          // Occasional haunting detective piano/vibraphone note
+          if (ambientStep % 2 === 1) {
+            const note = eerieNotes[Math.floor(ambientStep / 2) % eerieNotes.length];
+            playTone(note, 1.8, 'sine', 0.025, 0.25);
+          }
+          ambientStep++;
+        };
+
+        playPulse();
+        ambientInterval = setInterval(playPulse, 1750);
+      }
+
+      function stopAmbient() {
+        if (ambientInterval) {
+          clearInterval(ambientInterval);
+          ambientInterval = null;
+        }
+      }
+
+      return {
+        // Mechanical typewriter/switch click
+        playClick() {
+          vibrate(18);
+          playNoise(0.035, 0.09, 1800);
+          playTone(420, 0.04, 'square', 0.035, 0, 180);
+        },
+
+        // Dossier tab switch sound
+        playTab() {
+          vibrate(22);
+          playNoise(0.06, 0.08, 1200);
+          playTone(260, 0.06, 'triangle', 0.05, 0, 340);
+        },
+
+        // Opening an evidence file (paper rustle + ink stamp thud)
+        playFileOpen() {
+          vibrate([20, 30, 18]);
+          playNoise(0.11, 0.1, 1100);
+          playTone(135, 0.12, 'triangle', 0.1, 0.03, 65);
+          playTone(520, 0.08, 'sine', 0.03, 0.06);
+        },
+
+        // Classified Archive Login Granted (Noir chord swell)
+        playLoginSuccess() {
+          vibrate([30, 40, 65]);
+          playTone(146.83, 0.85, 'triangle', 0.09, 0);     // D3
+          playTone(220.00, 0.85, 'sine', 0.07, 0.12);      // A3
+          playTone(261.63, 0.95, 'sine', 0.06, 0.24);      // C4
+          playTone(349.23, 1.1, 'sine', 0.06, 0.36);       // F4
+        },
+
+        // Access Denied / Wrong Deduction Buzzer
+        playError() {
+          vibrate([85, 50, 125]);
+          playTone(145, 0.18, 'sawtooth', 0.09, 0, 125);
+          playTone(110, 0.28, 'sawtooth', 0.1, 0.19, 85);
+        },
+
+        // Encrypted Locker Safe Unlocked (11:00 PM)
+        playVaultUnlock() {
+          vibrate([25, 40, 25, 40, 90]);
+          playNoise(0.05, 0.1, 2400);
+          playTone(330, 0.12, 'triangle', 0.08, 0.05);
+          playTone(440, 0.14, 'triangle', 0.08, 0.18);
+          playTone(587.33, 0.35, 'sine', 0.1, 0.32);
+          playTone(880, 0.75, 'sine', 0.08, 0.45);
+        },
+
+        // Crime Thriller / Detective Case Closed Victory Theme
+        playVictoryNoir() {
+          vibrate([45, 40, 45, 40, 160]);
+          // Dramatic bass timpani hits + Noir minor-to-heroic resolution
+          playTone(73.42, 0.5, 'triangle', 0.16, 0);       // D2 boom
+          playTone(293.66, 0.35, 'triangle', 0.09, 0.02);  // D4
+          playTone(349.23, 0.35, 'triangle', 0.09, 0.24);  // F4
+          playTone(440.00, 0.45, 'triangle', 0.1, 0.46);   // A4
+          playTone(415.30, 0.25, 'sine', 0.08, 0.74);      // G#4 noir tension
+          playTone(440.00, 0.3, 'triangle', 0.1, 0.96);    // A4
+          // Final Case Closed Triumph Chord (D Major resolution)
+          playTone(73.42, 1.6, 'triangle', 0.15, 1.25);    // D2
+          playTone(146.83, 1.6, 'triangle', 0.1, 1.25);    // D3
+          playTone(293.66, 1.7, 'sine', 0.09, 1.28);       // D4
+          playTone(369.99, 1.7, 'sine', 0.08, 1.32);       // F#4
+          playTone(440.00, 1.8, 'sine', 0.09, 1.36);       // A4
+          playTone(587.33, 2.0, 'sine', 0.1, 1.42);        // D5
+        },
+
+        startAmbient,
+        stopAmbient,
+
+        toggleMute() {
+          isMuted = !isMuted;
+          if (isMuted) {
+            stopAmbient();
+          } else {
+            this.playClick();
+            startAmbient();
+          }
+          return isMuted;
+        }
+      };
+    })();
+
     // --- HELPER: ESCAPE HTML ---
     function escapeHTML(str) {
       return str
@@ -1079,6 +1311,7 @@
 
     // --- OPEN / CLOSE EVIDENCE MODAL ---
     function openEvidenceModal(item) {
+      SoundFX.playFileOpen();
       document.getElementById('modal-code').textContent = item.code;
       document.getElementById('modal-tag').textContent = item.tag;
       document.getElementById('modal-timestamp').textContent = item.timestamp;
@@ -1179,11 +1412,13 @@
     }
 
     function closeEvidenceModal() {
+      SoundFX.playClick();
       document.getElementById('evidence-modal-backdrop').classList.add('hidden');
     }
 
     // --- TAB NAVIGATION SWITCHING ---
     function switchTab(tabName) {
+      SoundFX.playTab();
       activeTab = tabName;
 
       // Hide all sections
@@ -1225,14 +1460,29 @@
 
       // Auto-Fill Credentials Button
       document.getElementById('auto-fill-btn').addEventListener('click', () => {
+        SoundFX.playClick();
         document.getElementById('agent-id-input').value = 'ADMIN';
         document.getElementById('passcode-input').value = '123';
         document.getElementById('login-error').classList.add('hidden');
       });
 
+      // Audio Toggle Button
+      document.getElementById('sound-toggle-btn').addEventListener('click', () => {
+        const muted = SoundFX.toggleMute();
+        document.getElementById('sound-icon-on').classList.toggle('hidden', muted);
+        document.getElementById('sound-icon-off').classList.toggle('hidden', !muted);
+        const label = document.getElementById('sound-toggle-label');
+        label.textContent = muted ? 'AUDIO: OFF' : 'AUDIO: ON';
+        const btn = document.getElementById('sound-toggle-btn');
+        btn.className = muted
+          ? 'flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-stone-800 border border-stone-700 text-xs font-jetbrains text-stone-500 transition cursor-pointer'
+          : 'flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-stone-800 border border-[#D97706]/60 text-xs font-jetbrains text-[#D97706] transition cursor-pointer';
+      });
+
       // Agent Login Form Submit
       document.getElementById('login-form').addEventListener('submit', (e) => {
         e.preventDefault();
+        SoundFX.playClick();
         const agentVal = document.getElementById('agent-id-input').value.trim().toUpperCase();
         const passVal = document.getElementById('passcode-input').value.trim().toUpperCase();
         const errorBox = document.getElementById('login-error');
@@ -1247,9 +1497,12 @@
 
         setTimeout(() => {
           if (agentVal === 'ADMIN' && passVal === '123') {
+            SoundFX.playLoginSuccess();
+            SoundFX.startAmbient();
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('dashboard-screen').classList.remove('hidden');
           } else {
+            SoundFX.playError();
             errorBox.classList.remove('hidden');
           }
           submitBtn.disabled = false;
@@ -1265,6 +1518,8 @@
 
       // Lock File / Logout Button
       document.getElementById('lock-file-btn').addEventListener('click', () => {
+        SoundFX.playClick();
+        SoundFX.stopAmbient();
         document.getElementById('dashboard-screen').classList.add('hidden');
         document.getElementById('login-screen').classList.remove('hidden');
       });
@@ -1299,6 +1554,7 @@
           cleaned === '23:00'
         ) {
           isLockerUnlocked = true;
+          SoundFX.playVaultUnlock();
           lockerError.classList.add('hidden');
           document.getElementById('locker-locked-view').classList.add('hidden');
           document.getElementById('locker-unlocked-view').classList.remove('hidden');
@@ -1314,6 +1570,7 @@
             </svg>
           `;
         } else {
+          SoundFX.playError();
           lockerError.classList.remove('hidden');
         }
       });
@@ -1345,6 +1602,7 @@
           weaponVal === 'poison_milk' &&
           timeVal === '11:00 PM'
         ) {
+          SoundFX.playVictoryNoir();
           failureBox.classList.add('hidden');
           successBox.classList.remove('hidden');
 
@@ -1354,6 +1612,7 @@
           statusBadge.className =
             'font-jetbrains font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-700 px-2 py-0.5';
         } else {
+          SoundFX.playError();
           successBox.classList.add('hidden');
           failureBox.classList.remove('hidden');
         }
