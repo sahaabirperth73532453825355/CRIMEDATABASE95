@@ -186,6 +186,27 @@
             <span>OPEN CLASSIFIED DOSSIER</span>
           </button>
         </form>
+
+        <!-- Helper Box with Auto-Fill Button -->
+        <div class="mt-6 pt-4 border-t border-stone-800">
+          <div class="bg-[#1C1917] border border-stone-700 rounded-none p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+            <div class="font-jetbrains text-[11px] text-stone-400 leading-relaxed">
+              <span class="text-[#D97706] font-bold block">
+                ID: ADMIN | Passcode: 123
+              </span>
+              <span class="font-bengali-serif text-xs text-stone-400">
+                তদন্ত শুরু করতে উপরের আইডি ও পাসকোড ব্যবহার করুন অথবা Auto-Fill ক্লিক করুন।
+              </span>
+            </div>
+            <button
+              id="auto-fill-btn"
+              type="button"
+              class="shrink-0 px-3 py-1.5 bg-[#0D0D0D] hover:bg-stone-800 border border-[#D97706]/60 text-[#D97706] font-jetbrains text-[11px] uppercase tracking-wider rounded-none transition cursor-pointer"
+            >
+              Auto-Fill
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -226,7 +247,7 @@
             <div class="hidden md:flex flex-col items-end font-jetbrains text-[11px]">
               <span class="text-[#D97706] flex items-center gap-1.5 font-bold">
                 <span class="w-2 h-2 bg-[#D97706] inline-block"></span>
-                INVESTIGATOR: ABIR
+                INVESTIGATOR: ADMIN
               </span>
               <span class="text-stone-500">ARCHIVE CLOCK // <span id="terminal-clock">00:00:00</span> IST</span>
             </div>
@@ -502,17 +523,27 @@
                 "আমি অবিনাশ মিত্র, সজ্ঞানে ও সুস্থ মস্তিষ্কে এই উইল করিতেছি যে, আমার অবর্তমানে আমার স্থাবর ও অস্থাবর সম্পত্তির নিম্নলিখিত বণ্টন কার্যকর হইবে:
               </p>
 
-              <div class="bg-stone-200/80 border-l-4 border-[#991B1B] p-4 text-stone-950">
-                <strong class="font-bold text-[#991B1B]">বিশেষ ধারা (Clause 4B):</strong>
-                আমার বিশ্বস্ত পার্সোনাল সেক্রেটারি
-                <span class="font-bold underline decoration-[#991B1B] decoration-2">
-                  সৌম্যজিৎ শেখর সাহা (Soumyajit Sekhar Saha)
-                </span>
-                -কে আমার ব্যক্তিগত ফান্ড থেকে নগদ
-                <span class="font-bold text-[#991B1B]">
-                  ২ কোটি টাকা (₹2,00,00,000)
-                </span>
-                এবং সল্টলেকের ফ্ল্যাটটি প্রদান করা হইবে।"
+              <div class="bg-stone-200/80 border-l-4 border-[#991B1B] p-4 text-stone-950 space-y-2">
+                <div>
+                  <strong class="font-bold text-[#991B1B]">বিশেষ ধারা (Clause 4B):</strong>
+                  আমার সমগ্র স্থাবর ও অস্থাবর সম্পত্তি সমান দুই ভাগে বণ্টন করা হইবে—
+                </div>
+                <ul class="list-disc pl-5 space-y-1">
+                  <li>
+                    <span class="font-bold text-[#991B1B]">৫০% (50%)</span> সম্পত্তি আমার পুত্র
+                    <span class="font-bold underline decoration-stone-700 decoration-2">
+                      রাহুল মিত্র (Rahul Mitra)
+                    </span>
+                    পাইবে।
+                  </li>
+                  <li>
+                    বাকি <span class="font-bold text-[#991B1B]">৫০% (50%)</span> সম্পত্তি আমার বিশ্বস্ত পার্সোনাল সেক্রেটারি
+                    <span class="font-bold underline decoration-[#991B1B] decoration-2">
+                      সৌম্যজিৎ শেখর সাহা (Soumyajit Sekhar Saha)
+                    </span>
+                    পাইবে।"
+                  </li>
+                </ul>
               </div>
 
               <p>
@@ -664,8 +695,8 @@
                   <strong class="text-[#991B1B]">Aconite বিষে</strong>।
                 </p>
                 <p>
-                  <strong>৩. খুনি শনাক্তকরণ:</strong> নতুন উইল সই হলে পুরনো উইলের ২ কোটি টাকা হাতছাড়া হয়ে যেত—এই ভয়েই পার্সোনাল সেক্রেটারি
-                  <strong class="text-[#991B1B]">সৌম্যজিৎ শেখর সাহা</strong> দুধে বিষ মেশান। ডায়েরিতে লেখা বাঁ হাতের অনামিকার রুপোর আংটিটিও তাঁরই ছিল!
+                  <strong>৩. খুনি শনাক্তকরণ:</strong> নতুন উইল সই হলে পুরনো উইলের ৫০% সম্পত্তি হাতছাড়া হয়ে যেত—এই ভয়েই পার্সোনাল সেক্রেটারি
+                  <strong class="text-[#991B1B]">সৌম্যজিৎ শেখর সাহা</strong> দুধে বিষ মেশান। ডায়েরিতে লেখা আংটিটিও তাঁরই ছিল!
                 </p>
               </div>
             </div>
@@ -828,17 +859,17 @@
         visualType: 'guestlist'
       },
       {
-        id: 'EV-07',
-        code: 'LALBAZAR/DSK-2026/01-G',
-        category: 'CONFIDENTIAL DIARY',
-        title: 'অজ্ঞাতনামা ডায়েরির ছেঁড়া পাতা (Killer’s Diary)',
-        timestamp: 'RECOVERED // FIREPLACE',
-        summary: 'স্টাডি রুমের ফায়ারপ্লেসের পাশ থেকে উদ্ধার হওয়া অর্ধদগ্ধ পাতা।',
-        tag: 'SMOKING GUN',
-        content: `"ও ভেবেছিল আমাকে এভাবে ছুড়ে ফেলে দেবে? বছরের পর বছর ওর সব নোংরা হিসেব সামলালাম, আর আজ নতুন উইল করে আমাকে রাস্তায় বসানোর প্ল্যান করছে! আজ রাতেই সব শেষ করব। যখন গরম দুধের গ্লাসটায় বিষের ফোঁটাগুলো মেশাচ্ছিলাম, আমার হাত একটুও কাঁপেনি। গ্লাসটা নামিয়ে রাখার সময় টেবিলের ল্যাম্পের আলো আমার বাঁ হাতের অনামিকার রুপোর আংটিটায় (Silver ring on my left ring finger) ঠিকরে পড়েছিল... ঠিক যেন আমার জয়ের সংকেত। ১লা জানুয়ারির সূর্য আর ওকে দেখতে হবে না।"`,
-        visualType: 'diary'
-      }
-    ];
+      id: 'EV-07',
+      code: 'LALBAZAR/DSK-2026/01-G',
+      category: 'CONFIDENTIAL DIARY',
+      title: 'অজ্ঞাতনামা ডায়েরির ছেঁড়া পাতা (Killer’s Diary)',
+      timestamp: 'RECOVERED // FIREPLACE',
+      summary: 'স্টাডি রুমের ফায়ারপ্লেসের পাশ থেকে উদ্ধার হওয়া অর্ধদগ্ধ পাতা।',
+      tag: 'SMOKING GUN',
+      content: `"ও ভেবেছিল আমাকে এভাবে ছুড়ে ফেলে দেবে? আজ রাতেই সব শেষ করব। যখন গরম দুধের গ্লাসটায় বিষের ফোঁটাগুলো মেশাচ্ছিলাম, আমার হাত একটুও কাঁপেনি। গ্লাসটা নামিয়ে রাখার সময় টেবিলের ল্যাম্পের আলো আমার আংটিটায় (রিং) ঠিকরে পড়েছিল... ঠিক যেন আমার জয়ের সংকেত। ১লা জানুয়ারির সূর্য আর ওকে দেখতে হবে না।"`,
+      visualType: 'diary'
+    }
+  ];
 
     const SUSPECTS = [
       {
@@ -1192,6 +1223,13 @@
       renderEvidenceCards();
       renderSuspectsCards();
 
+      // Auto-Fill Credentials Button
+      document.getElementById('auto-fill-btn').addEventListener('click', () => {
+        document.getElementById('agent-id-input').value = 'ADMIN';
+        document.getElementById('passcode-input').value = '123';
+        document.getElementById('login-error').classList.add('hidden');
+      });
+
       // Agent Login Form Submit
       document.getElementById('login-form').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -1208,7 +1246,7 @@
         `;
 
         setTimeout(() => {
-          if (agentVal === 'ABIR' && passVal === '9500') {
+          if (agentVal === 'ADMIN' && passVal === '123') {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('dashboard-screen').classList.remove('hidden');
           } else {
