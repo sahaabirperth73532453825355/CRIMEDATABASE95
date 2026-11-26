@@ -54,9 +54,20 @@
       text-transform: uppercase;
       box-shadow: inset 0 0 0 1px rgba(153, 27, 27, 0.35);
     }
+    /* Subtle tactile press feedback for iOS & mobile touch */
+    .tactile-btn:active {
+      transform: scale(0.98);
+    }
   </style>
 </head>
 <body class="min-h-screen bg-[#0D0D0D] text-stone-200 relative overflow-x-hidden selection:bg-[#991B1B] selection:text-[#F4EFE6]">
+
+  <!-- Hidden iOS Safari 17.4+ Native Taptic Engine Switch Fallback -->
+  <div aria-hidden="true" style="position:fixed;left:-9999px;top:-9999px;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none;">
+    <label id="ios-haptic-label" for="ios-haptic-input">
+      <input id="ios-haptic-input" type="checkbox" switch tabindex="-1" />
+    </label>
+  </div>
 
   <!-- Subtle Film Grain Overlay -->
   <div class="pointer-events-none fixed inset-0 z-40 film-grain"></div>
@@ -74,7 +85,6 @@
         <!-- Top Classified Strip -->
         <div class="border-b-2 border-double border-stone-700 pb-3 mb-6 flex flex-wrap items-center justify-between gap-2">
           <div class="flex items-center gap-2 text-[#D97706] font-jetbrains text-[11px] tracking-[0.18em] font-bold uppercase">
-            <!-- ShieldAlert SVG -->
             <svg class="w-4 h-4 text-[#991B1B] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
               <path d="M12 8v4"/>
@@ -98,7 +108,6 @@
         <!-- Department Title -->
         <div class="mb-7">
           <div class="inline-flex items-center justify-center w-12 h-12 rounded-none bg-[#1C1917] border border-stone-600 mb-4">
-            <!-- Fingerprint SVG -->
             <svg class="w-6 h-6 text-[#D97706]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M2 12C2 6.5 6.5 2 12 2a10 10 0 0 1 8 4"/>
               <path d="M5 19.5C5.5 18 6 15 6 12c0-.7.12-1.37.34-2"/>
@@ -129,7 +138,6 @@
               AGENT ID // অফিসার পরিচয়পত্র
             </label>
             <div class="relative">
-              <!-- Terminal SVG -->
               <svg class="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="4 17 10 11 4 5"/>
                 <line x1="12" y1="19" x2="20" y2="19"/>
@@ -149,7 +157,6 @@
               ARCHIVE PASSCODE // গোপন সংকেত
             </label>
             <div class="relative">
-              <!-- KeyRound SVG -->
               <svg class="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/>
                 <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"/>
@@ -177,7 +184,7 @@
           <button
             id="login-submit-btn"
             type="submit"
-            class="w-full bg-[#991B1B] hover:bg-[#7F1D1D] border border-red-400/30 text-[#F4EFE6] font-cinzel font-bold text-sm tracking-[0.2em] uppercase py-3 rounded-none shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
+            class="tactile-btn w-full bg-[#991B1B] hover:bg-[#7F1D1D] border border-red-400/30 text-[#F4EFE6] font-cinzel font-bold text-sm tracking-[0.2em] uppercase py-3 rounded-none shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
@@ -201,7 +208,7 @@
             <button
               id="auto-fill-btn"
               type="button"
-              class="shrink-0 px-3 py-1.5 bg-[#0D0D0D] hover:bg-stone-800 border border-[#D97706]/60 text-[#D97706] font-jetbrains text-[11px] uppercase tracking-wider rounded-none transition cursor-pointer"
+              class="tactile-btn shrink-0 px-3 py-1.5 bg-[#0D0D0D] hover:bg-stone-800 border border-[#D97706]/60 text-[#D97706] font-jetbrains text-[11px] uppercase tracking-wider rounded-none transition cursor-pointer"
             >
               Auto-Fill
             </button>
@@ -243,7 +250,7 @@
             </div>
           </div>
 
-          <div class="flex items-center gap-4">
+          <div class="flex items-center gap-3 sm:gap-4">
             <div class="hidden md:flex flex-col items-end font-jetbrains text-[11px]">
               <span class="text-[#D97706] flex items-center gap-1.5 font-bold">
                 <span class="w-2 h-2 bg-[#D97706] inline-block"></span>
@@ -254,7 +261,8 @@
             <!-- Audio / Noir BGM Toggle Button -->
             <button
               id="sound-toggle-btn"
-              class="flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-stone-800 border border-[#D97706]/60 text-xs font-jetbrains text-[#D97706] transition cursor-pointer"
+              type="button"
+              class="tactile-btn flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-stone-800 border border-[#D97706]/60 text-xs font-jetbrains text-[#D97706] transition cursor-pointer"
               title="Toggle Crime Noir Audio"
             >
               <svg id="sound-icon-on" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -271,7 +279,8 @@
             </button>
             <button
               id="lock-file-btn"
-              class="flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-[#991B1B] border border-stone-600 hover:border-[#991B1B] text-xs font-jetbrains text-stone-300 hover:text-white transition cursor-pointer"
+              type="button"
+              class="tactile-btn flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-[#991B1B] border border-stone-600 hover:border-[#991B1B] text-xs font-jetbrains text-stone-300 hover:text-white transition cursor-pointer"
               title="Lock Archive"
             >
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -316,8 +325,9 @@
       <nav class="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6 border-b border-stone-800 pb-4">
         <button
           id="tab-btn-evidence"
+          type="button"
           data-tab="evidence"
-          class="tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#1C1917] border-[#D97706] text-[#F4EFE6] shadow-[inset_0_2px_0_0_#D97706]"
+          class="tactile-btn tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#1C1917] border-[#D97706] text-[#F4EFE6] shadow-[inset_0_2px_0_0_#D97706]"
         >
           <svg id="tab-icon-evidence" class="w-4 h-4 shrink-0 text-[#D97706]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
@@ -334,8 +344,9 @@
 
         <button
           id="tab-btn-suspects"
+          type="button"
           data-tab="suspects"
-          class="tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
+          class="tactile-btn tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
         >
           <svg id="tab-icon-suspects" class="w-4 h-4 shrink-0 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
@@ -345,14 +356,15 @@
           </svg>
           <div class="text-left">
             <div class="font-bengali-serif font-bold text-sm leading-tight">সন্দেহভাজন তালিকা</div>
-            <div class="font-jetbrains text-[10px] tracking-wider opacity-75">SUSPECTS LOG [05]</div>
+            <div class="font-jetbrains text-[10px] tracking-wider opacity-75">SUSPECTS LOG [08]</div>
           </div>
         </button>
 
         <button
           id="tab-btn-locker"
+          type="button"
           data-tab="locker"
-          class="tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
+          class="tactile-btn tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
         >
           <span id="tab-icon-locker" class="shrink-0 text-stone-500">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -368,8 +380,9 @@
 
         <button
           id="tab-btn-verdict"
+          type="button"
           data-tab="verdict"
-          class="tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
+          class="tactile-btn tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700"
         >
           <svg id="tab-icon-verdict" class="w-4 h-4 shrink-0 text-stone-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="8" r="6"/>
@@ -386,7 +399,6 @@
            TAB 1: EVIDENCE FILES (প্রমাণপত্র)
            ======================================================================== -->
       <section id="section-evidence" class="tab-section space-y-5">
-        <!-- Double-Bordered Section Header -->
         <div class="bg-[#1C1917] border border-stone-700 p-1">
           <div class="border border-stone-600/70 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
@@ -401,7 +413,7 @@
                 <span>সংগৃহীত প্রমাণপত্র ও ফরেনসিক নথি (Evidence Files)</span>
               </h2>
               <p class="font-bengali-serif text-xs sm:text-sm text-stone-400 mt-1">
-                প্রতিটি ফাইলে ক্লিক করে মূল নথি পরীক্ষা করুন। সময়ের হিসেব এবং সূত্রগুলো মিলিয়ে প্রকৃত খুনিকে চিহ্নিত করুন।
+                প্রতিটি ফাইলে ক্লিক করে মূল নথি পরীক্ষা করুন। সময়ের হিসেব, জবানবন্দি এবং সূত্রগুলো মিলিয়ে প্রকৃত খুনিকে চিহ্নিত করুন।
               </p>
             </div>
             <div class="self-start sm:self-center ink-stamp font-jetbrains text-[10px] font-bold px-3 py-1 bg-[#141210]">
@@ -433,7 +445,7 @@
               <span>সন্দেহভাজনদের প্রোফাইল ও জেরা নোট (Suspects Database)</span>
             </h2>
             <p class="font-bengali-serif text-xs sm:text-sm text-stone-400 mt-1">
-              ঘটনার রাতে মিত্র নিবাসে উপস্থিত ৫ জন প্রধান সন্দেহভাজনের মোটিভ, অ্যালিবাই এবং গোয়েন্দা পর্যবেক্ষণ।
+              ঘটনার রাতে মিত্র নিবাসে উপস্থিত ও ঘটনার সাথে সরাসরি যুক্ত ৮ জন প্রধান সন্দেহভাজনের মোটিভ, অ্যালিবাই এবং গোয়েন্দা পর্যবেক্ষণ।
             </p>
           </div>
         </div>
@@ -491,7 +503,7 @@
 
               <button
                 type="submit"
-                class="w-full bg-[#D97706] hover:bg-amber-600 text-[#0D0D0D] font-cinzel font-extrabold text-xs tracking-[0.2em] uppercase py-3 rounded-none transition cursor-pointer"
+                class="tactile-btn w-full bg-[#D97706] hover:bg-amber-600 text-[#0D0D0D] font-cinzel font-extrabold text-xs tracking-[0.2em] uppercase py-3 rounded-none transition cursor-pointer"
               >
                 UNLOCK SEALED RECORD
               </button>
@@ -538,30 +550,18 @@
 
             <div class="font-bengali-serif text-sm sm:text-base space-y-4 leading-relaxed text-stone-900">
               <p>
-                "আমি অবিনাশ মিত্র, সজ্ঞানে ও সুস্থ মস্তিষ্কে এই উইল করিতেছি যে, আমার অবর্তমানে আমার স্থাবর ও অস্থাবর সম্পত্তির নিম্নলিখিত বণ্টন কার্যকর হইবে:
+                "আমি অবিনাশ মিত্র, সজ্ঞানে ও সুস্থ মস্তিষ্কে এই উইল করিতেছি যে, আমার অবর্তমানে আমার ব্যক্তিগত সঞ্চিত অর্থের নিম্নলিখিত বণ্টন কার্যকর হইবে:
               </p>
 
               <div class="bg-stone-200/80 border-l-4 border-[#991B1B] p-4 text-stone-950 space-y-2">
                 <div>
                   <strong class="font-bold text-[#991B1B]">বিশেষ ধারা (Clause 4B):</strong>
-                  আমার সমগ্র স্থাবর ও অস্থাবর সম্পত্তি সমান দুই ভাগে বণ্টন করা হইবে—
+                  আমার বিশ্বস্ত পার্সোনাল সেক্রেটারি
+                  <span class="font-bold underline decoration-[#991B1B] decoration-2">
+                    সৌম্যজিৎ শেখর সাহা (Soumyajit Sekhar Saha)
+                  </span>
+                  -কেই আমার ব্যক্তিগত তহবিলের সমস্ত নগদ টাকা প্রদান করা হইবে। (পৈতৃক মিত্র নিবাসের উত্তরাধিকার প্রচলিত পারিবারিক আইন অনুযায়ী ন্যস্ত থাকিবে।)"
                 </div>
-                <ul class="list-disc pl-5 space-y-1">
-                  <li>
-                    <span class="font-bold text-[#991B1B]">৫০% (50%)</span> সম্পত্তি আমার পুত্র
-                    <span class="font-bold underline decoration-stone-700 decoration-2">
-                      রাহুল মিত্র (Rahul Mitra)
-                    </span>
-                    পাইবে।
-                  </li>
-                  <li>
-                    বাকি <span class="font-bold text-[#991B1B]">৫০% (50%)</span> সম্পত্তি আমার বিশ্বস্ত পার্সোনাল সেক্রেটারি
-                    <span class="font-bold underline decoration-[#991B1B] decoration-2">
-                      সৌম্যজিৎ শেখর সাহা (Soumyajit Sekhar Saha)
-                    </span>
-                    পাইবে।"
-                  </li>
-                </ul>
               </div>
 
               <p>
@@ -571,7 +571,7 @@
 
             <div class="mt-6 pt-3 border-t border-stone-400 flex items-center justify-between font-jetbrains text-xs text-stone-700">
               <span class="font-bengali-serif font-bold">স্বাক্ষর: অবিনাশ মিত্র</span>
-              <span class="text-[#991B1B] font-bold">MOTIVE CONFIRMED // LALBAZAR</span>
+              <span class="text-[#991B1B] font-bold">ARCHIVED RECORD // LALBAZAR</span>
             </div>
           </div>
         </div>
@@ -587,7 +587,6 @@
             <div class="flex items-center justify-between gap-3 pb-4 border-b-2 border-double border-stone-700 mb-6">
               <div class="flex items-center gap-3">
                 <div class="w-11 h-11 bg-[#1C1917] border border-[#991B1B] flex items-center justify-center shrink-0">
-                  <!-- Skull SVG -->
                   <svg class="w-5 h-5 text-[#991B1B]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="9" cy="12" r="1"/>
                     <circle cx="15" cy="12" r="1"/>
@@ -627,6 +626,9 @@
                   <option value="অনিমেষ বসু">অনিমেষ বসু (বিজনেস পার্টনার)</option>
                   <option value="সৌম্যজিৎ শেখর সাহা">সৌম্যজিৎ শেখর সাহা (পার্সোনাল সেক্রেটারি)</option>
                   <option value="বিমল দা">বিমল দা (কেয়ারটেকার)</option>
+                  <option value="মীরা দেবী">মীরা দেবী (মৃতের ছোট বোন)</option>
+                  <option value="অরুণাভ সেনগুপ্ত">অরুণাভ সেনগুপ্ত (পারিবারিক আইনজীবী)</option>
+                  <option value="দেবাশিস চৌধুরী">দেবাশিস চৌধুরী (ব্যক্তিগত গাড়িচালক)</option>
                 </select>
               </div>
 
@@ -676,7 +678,7 @@
 
               <button
                 type="submit"
-                class="w-full bg-[#991B1B] hover:bg-[#7F1D1D] border border-red-400/30 text-[#F4EFE6] font-cinzel font-bold text-sm tracking-[0.2em] uppercase py-3.5 rounded-none shadow-lg transition cursor-pointer"
+                class="tactile-btn w-full bg-[#991B1B] hover:bg-[#7F1D1D] border border-red-400/30 text-[#F4EFE6] font-cinzel font-bold text-sm tracking-[0.2em] uppercase py-3.5 rounded-none shadow-lg transition cursor-pointer"
               >
                 SUBMIT OFFICIAL VERDICT
               </button>
@@ -705,16 +707,16 @@
 
               <div class="font-bengali-serif text-xs sm:text-sm text-stone-800 leading-relaxed space-y-2 bg-stone-200/70 p-4 border border-stone-300">
                 <p>
-                  <strong>১. সময়ের ধাঁধা:</strong> সন্ধ্যা ৭:০০ টায় ২০ মিনিটের লোডশেডিং হওয়ায় ইলেকট্রিক দেয়াল ঘড়িটি ২০ মিনিট স্লো চলছিল। তাই ঘড়িটি ১০:৪০ PM-এ ভাঙলেও আসল সময় ছিল
+                  <strong>১. সময়ের ধাঁধা:</strong> সন্ধ্যা ৭:০০ টায় ২০ মিনিটের লোডশেডিং হওয়ায় ইলেকট্রিক দেয়াল ঘড়িটি ২০ মিনিট স্লো চলছিল। তাই রাত ১১:০০ টায় ধস্তাধস্তির নাটক সাজাতে গিয়ে ঘড়িটি ১০:৪০ PM-এ ভেঙে থেমে গেলেও আসল সময় ছিল
                   <strong class="text-[#991B1B]">১১:০০ PM</strong> (যে কারণে অবিনাশ বাবু ১০:৪৫ PM-এ জীবিত অবস্থায় উকিলকে মেসেজ পাঠাতে পেরেছিলেন)।
                 </p>
                 <p>
-                  <strong>২. হত্যার পদ্ধতি:</strong> মাথার আঘাতটি মৃত্যুর পরে সাজানো হয়েছিল। আসল মৃত্যু হয়েছে গরম দুধে মেশানো
-                  <strong class="text-[#991B1B]">Aconite বিষে</strong>।
+                  <strong>২. হত্যার পদ্ধতি:</strong> মাথার পিতলের ফুলদানির আঘাতটি মৃত্যুর পরে সাজানো হয়েছিল। আসল মৃত্যু হয়েছে গরম দুধে মেশানো
+                  <strong class="text-[#991B1B]">Aconite বিষে</strong>, যা সন্ধ্যায় ডাঃ অন্তর্জিতা মাইতির অসতর্কতায় তাঁর মেডিকেল ব্যাগ থেকে খোয়া গিয়েছিল।
                 </p>
                 <p>
-                  <strong>৩. খুনি শনাক্তকরণ:</strong> নতুন উইল সই হলে পুরনো উইলের ৫০% সম্পত্তি হাতছাড়া হয়ে যেত—এই ভয়েই পার্সোনাল সেক্রেটারি
-                  <strong class="text-[#991B1B]">সৌম্যজিৎ শেখর সাহা</strong> দুধে বিষ মেশান। ডায়েরিতে লেখা আংটিটিও তাঁরই ছিল!
+                  <strong>৩. খুনি শনাক্তকরণ:</strong> পুরনো উইলে ব্যক্তিগত তহবিলের সমস্ত টাকা সৌম্যজিৎ শেখর সাহাকে দেওয়া হয়েছিল দেখে প্রথমে সবাই তাঁকেই সন্দেহ করেছিল। কিন্তু ১লা জানুয়ারি নতুন উইল সই হলে পৈতৃক মিত্র নিবাসের শেষ উত্তরাধিকারটুকুও হারাতেন মৃতের পুত্র
+                  <strong class="text-[#991B1B]">রাহুল মিত্র</strong>। জুয়ার দেনা মেটাতে এবং পৈতৃক সম্পত্তি বাঁচাতে তিনিই গরম দুধে বিষ মেশান। বাগানে ফোনে কথা বলার মিথ্যে অ্যালিবাই (কল লগে কোনো কল নেই) এবং রাত ১০:৪০-এ করিডোরে তাঁর হাতের আংটিই (রিং) তাঁকে ধরিয়ে দেয়!
                 </p>
               </div>
             </div>
@@ -732,7 +734,7 @@
                 ACCESS DENIED / INCORRECT DEDUCTION
               </div>
               <p class="font-bengali-serif text-xs sm:text-sm text-stone-300">
-                আপনার তথ্যে ভুল রয়েছে! প্রমাণপত্রগুলো (বিশেষত লোডশেডিংয়ের সময়, ময়নাতদন্ত রিপোর্ট এবং ডায়েরির আংটির বর্ণনা) আবার ভালো করে যাচাই করুন।
+                আপনার তথ্যে ভুল রয়েছে! প্রমাণপত্রগুলো (বিশেষত লোডশেডিংয়ের সময়, WhatsApp মেসেজ, ময়নাতদন্ত রিপোর্ট এবং সন্দেহভাজনদের অ্যালিবাই) আবার ভালো করে যাচাই করুন।
               </p>
             </div>
           </div>
@@ -762,7 +764,8 @@
         </div>
         <button
           id="modal-close-x"
-          class="p-1.5 bg-[#1C1917] hover:bg-[#991B1B] border border-stone-700 text-stone-300 hover:text-white transition cursor-pointer"
+          type="button"
+          class="tactile-btn p-1.5 bg-[#1C1917] hover:bg-[#991B1B] border border-stone-700 text-stone-300 hover:text-white transition cursor-pointer"
         >
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M18 6 6 18"/>
@@ -772,7 +775,7 @@
       </div>
 
       <!-- Modal Body -->
-      <div class="p-5 sm:p-7 max-h-[82vh] overflow-y-auto space-y-5">
+      <div class="p-5 sm:p-7 max-h-[78vh] overflow-y-auto space-y-5">
         <!-- Crisp Double-Border Police Report Title Block -->
         <div class="border-2 border-double border-stone-600 bg-[#141210] p-4 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -796,7 +799,8 @@
       <div class="bg-[#12100E] border-t border-stone-800 px-5 py-3 flex justify-end">
         <button
           id="modal-close-btn"
-          class="px-5 py-2 bg-[#1C1917] hover:bg-[#991B1B] border border-stone-600 hover:border-[#991B1B] text-[#F4EFE6] font-jetbrains text-xs tracking-wider uppercase rounded-none transition cursor-pointer"
+          type="button"
+          class="tactile-btn px-5 py-2 bg-[#1C1917] hover:bg-[#991B1B] border border-stone-600 hover:border-[#991B1B] text-[#F4EFE6] font-jetbrains text-xs tracking-wider uppercase rounded-none transition cursor-pointer"
         >
           RETURN TO ARCHIVE
         </button>
@@ -805,10 +809,10 @@
   </div>
 
   <!-- ========================================================================
-       VANILLA JAVASCRIPT APPLICATION LOGIC
+       VANILLA JAVASCRIPT APPLICATION LOGIC & iOS-SAFE AUDIO/HAPTICS ENGINE
        ======================================================================== -->
   <script>
-    // --- CASE DATA (AUTHENTIC BENGALI & ENGLISH HYBRID) ---
+    // --- CASE DATA (AUTHENTIC BENGALI & ENGLISH HYBRID — ZERO PLOT HOLES) ---
     const EVIDENCE_ITEMS = [
       {
         id: 'EV-01',
@@ -851,7 +855,7 @@
         timestamp: '31 DEC // 22:45 HRS',
         summary: 'পারিবারিক আইনজীবী ব্যারিস্টার সেনগুপ্তকে পাঠানো মেসেজ।',
         tag: 'DIGITAL TIMESTAMP',
-        content: `ডিভাইস: iPhone 15 Pro (অবিনাশ মিত্র)\nপ্রাপক: ব্যারিস্টার অরুণাভ সেনগুপ্ত (Family Lawyer)\nসার্ভার টাইমস্ট্যাম্প: ৩১ ডিসেম্বর ২০২৫, রাত ১০:৪৫ PM (Blue Tick - Read)\n\nমেসেজ টেক্সট:\n"অরুণাভ, আমি চূড়ান্ত সিদ্ধান্ত নিয়ে নিয়েছি। পুরনো উইলটা বাতিল করতে হবে। আগামীকাল অর্থাৎ ১লা জানুয়ারি সকাল ১০টায় নতুন উইলের কাগজপত্র নিয়ে মিত্র নিবাসে চলে এসো। আমি সই করে দেব। সব সম্পত্তি একমাত্র রাহুলই পাবে।"`,
+        content: `ডিভাইস: iPhone 15 Pro (অবিনাশ মিত্র)\nপ্রাপক: ব্যারিস্টার অরুণাভ সেনগুপ্ত (Family Lawyer)\nসার্ভার টাইমস্ট্যাম্প: ৩১ ডিসেম্বর ২০২৫, রাত ১০:৪৫ PM (Blue Tick - Read)\n\nমেসেজ টেক্সট:\n"অরুণাভ, আমি চূড়ান্ত সিদ্ধান্ত নিয়ে নিয়েছি। পুরনো উইলটা বাতিল করতে হবে। রাহুলের জুয়ার দেনা আর বেহিসেবি জীবনযাপন আমি আর বরদাস্ত করব না। আগামীকাল ১লা জানুয়ারি সকাল ১০টায় নতুন উইলের কাগজপত্র নিয়ে মিত্র নিবাসে চলে এসো—আমি ওকে পৈতৃক বাড়ির উত্তরাধিকার থেকেও পুরোপুরি বঞ্চিত করে সমস্ত সম্পত্তি চ্যারিটি ট্রাস্টে দান করে দেব।"`,
         visualType: 'whatsapp'
       },
       {
@@ -871,23 +875,23 @@
         category: 'SURVEILLANCE & NOTES',
         title: 'পার্টি গেস্ট লিস্ট ও পোশাকের বিবরণ',
         timestamp: '31 DEC // 21:30 HRS',
-        summary: 'রাতের পার্টিতে উপস্থিত অতিথিদের পোশাক ও গয়নার নোট।',
+        summary: 'রাতের পার্টিতে উপস্থিত অতিথি ও কর্মীদের পোশাক এবং গয়নার নোট।',
         tag: 'VISUAL CLUE',
-        content: `মিত্র নিবাস - বর্ষবরণ পার্টির উপস্থিতি ও পর্যবেক্ষণ নোট:\n\n• রাহুল মিত্র (ছেলে): কালো স্যুট, বাঁ হাতে দামি রোলেক্স ঘড়ি। কোনো আংটি পরেননি।\n• ডাঃ অন্তর্জিতা মাইতি (চিকিৎসক): মেরুন রঙের শাড়ি, সোনার বালা এবং ডান হাতে পান্নার আংটি।\n• অনিমেষ বসু (পার্টনার): নেভি ব্লু ব্লেজার, ডান হাতের কনিষ্ঠায় মোটা সোনার আংটি।\n• সৌম্যজিৎ শেখর সাহা (পার্সোনাল সেক্রেটারি): গাঢ় নীল রঙের সিল্ক পাঞ্জাবি (Dark Blue Silk Panjabi), এবং বাঁ হাতের অনামিকায় (Left Ring Finger) একটি কারুকাজ করা রুপোর আংটি (Silver Ring) পরেছিলেন।\n• বিমল দা (কেয়ারটেকার): সাধারণ সাদা ধুতি-পাঞ্জাবি, হাতে কোনো গয়না নেই।`,
+        content: `মিত্র নিবাস - বর্ষবরণ পার্টির উপস্থিতি ও পর্যবেক্ষণ নোট:\n\n• রাহুল মিত্র (ছেলে): কালো স্যুট, বাঁ হাতে দামি রোলেক্স ঘড়ি। পার্টির শুরুতে কোনো আংটি না থাকলেও রাত ১০:৪০ নাগাদ স্টাডি রুমের করিডোরের কাছে তাঁর হাতে একটি আংটি (রিং) চকচক করতে দেখা গেছে বলে করিডোরের ঝাপসা সিসিটিভি ফুটেজে ধরা পড়েছে।\n• ডাঃ অন্তর্জিতা মাইতি (চিকিৎসক): মেরুন রঙের শাড়ি, সোনার বালা এবং ডান হাতে পান্নার আংটি।\n• অনিমেষ বসু (পার্টনার): নেভি ব্লু ব্লেজার, ডান হাতের কনিষ্ঠায় মোটা সোনার আংটি।\n• সৌম্যজিৎ শেখর সাহা (পার্সোনাল সেক্রেটারি): গাঢ় নীল রঙের সিল্ক পাঞ্জাবি এবং বাঁ হাতের অনামিকায় রুপোর আংটি পরেছিলেন।\n• বিমল দা (কেয়ারটেকার): সাধারণ সাদা ধুতি-পাঞ্জাবি, হাতে কোনো গয়না নেই।\n• মীরা দেবী (ছোট বোন): অফ-হোয়াইট তসরের শাড়ি, গলায় মুক্তোর মালা এবং ডান হাতে হীরের আংটি।\n• অরুণাভ সেনগুপ্ত (আইনজীবী): ছাই রঙের থ্রি-পিস স্যুট, বাঁ হাতে সোনার চেন দেওয়া ঘড়ি।\n• দেবাশিস চৌধুরী (গাড়িচালক): খাকি রঙের ইউনিফর্ম জ্যাকেট, ডান হাতে তামার বালা।`,
         visualType: 'guestlist'
       },
       {
-      id: 'EV-07',
-      code: 'LALBAZAR/DSK-2026/01-G',
-      category: 'CONFIDENTIAL DIARY',
-      title: 'অজ্ঞাতনামা ডায়েরির ছেঁড়া পাতা (Killer’s Diary)',
-      timestamp: 'RECOVERED // FIREPLACE',
-      summary: 'স্টাডি রুমের ফায়ারপ্লেসের পাশ থেকে উদ্ধার হওয়া অর্ধদগ্ধ পাতা।',
-      tag: 'SMOKING GUN',
-      content: `"ও ভেবেছিল আমাকে এভাবে ছুড়ে ফেলে দেবে? আজ রাতেই সব শেষ করব। যখন গরম দুধের গ্লাসটায় বিষের ফোঁটাগুলো মেশাচ্ছিলাম, আমার হাত একটুও কাঁপেনি। গ্লাসটা নামিয়ে রাখার সময় টেবিলের ল্যাম্পের আলো আমার আংটিটায় (রিং) ঠিকরে পড়েছিল... ঠিক যেন আমার জয়ের সংকেত। ১লা জানুয়ারির সূর্য আর ওকে দেখতে হবে না।"`,
-      visualType: 'diary'
-    }
-  ];
+        id: 'EV-07',
+        code: 'LALBAZAR/DSK-2026/01-G',
+        category: 'CONFIDENTIAL DIARY',
+        title: 'অজ্ঞাতনামা ডায়েরির ছেঁড়া পাতা (Killer’s Diary)',
+        timestamp: 'RECOVERED // FIREPLACE',
+        summary: 'স্টাডি রুমের ফায়ারপ্লেসের পাশ থেকে উদ্ধার হওয়া অর্ধদগ্ধ পাতা।',
+        tag: 'CRYPTIC NOTE',
+        content: `"অনেক ধৈর্য ধরেছি, আর নয়। সব হিসাব আজ রাতেই চুকিয়ে দেব। যখন গরম দুধের গ্লাসটায় কয়েক ফোঁটা মেশাচ্ছিলাম, আমার হাত একটুও কাঁপেনি। গ্লাসটা নামিয়ে রাখার সময় টেবিলের ল্যাম্পের আলো আমার আংটিটায় (রিং) ঠিকরে পড়েছিল... ঠিক যেন নীরব সংকেত। ১লা জানুয়ারির সকাল আর ওকে দেখতে হবে না।"`,
+        visualType: 'diary'
+      }
+    ];
 
     const SUSPECTS = [
       {
@@ -897,9 +901,9 @@
         role: 'মৃতের একমাত্র পুত্র (Son)',
         age: '২৯ বছর',
         status: 'PRIME SUSPECT #1',
-        motive: 'জুয়ায় প্রচুর টাকা দেনা হয়ে গিয়েছিল। বাবার সাথে সম্পত্তি ও টাকার ভাগ নিয়ে প্রায়ই তীব্র অশান্তি হতো।',
-        alibi: 'রাত ১০:৩০ থেকে ১১:১৫ পর্যন্ত বাগানে ফোনে কথা বলছিলেন বলে দাবি করেন, তবে কোনো প্রত্যক্ষদর্শী নেই।',
-        notes: 'পার্টির সময় বাবার সাথে উত্তপ্ত বাক্যবিনিময় করতে দেখা গেছে। তবে নতুন উইল হলে রাহুলই সব সম্পত্তি পেত।'
+        motive: 'জুয়ায় বিশাল অঙ্কের দেনা হয়ে গিয়েছিল এবং পাওনাদাররা ৩১শে ডিসেম্বর রাতেই চরম সময়সীমা দিয়েছিল। পুরনো উইলে নগদ টাকা না পেলেও পৈতৃক বাড়ির অধিকার ছিল, কিন্তু নতুন উইলে সেটিও হাতছাড়া হওয়ার কথা ছিল।',
+        alibi: 'রাত ১০:৩০ থেকে ১১:১৫ পর্যন্ত বাগানে ফোনে কথা বলছিলেন বলে দাবি করেন, কিন্তু টেলিকম কল লগে সেই সময়ের কোনো আউটগোয়িং বা ইনকামিং কল পাওয়া যায়নি।',
+        notes: 'সন্ধ্যায় বাবার সাথে উত্তপ্ত বাক্যবিনিময় হয়েছে। রাত ১০:৪০ নাগাদ স্টাডি রুমের করিডোরে তাঁকে দেখা গেছে এবং তাঁর হাতে একটি আংটি লক্ষ্য করা গিয়েছিল।'
       },
       {
         id: 'SUS-02',
@@ -908,9 +912,9 @@
         role: 'পারিবারিক চিকিৎসক (Family Doctor)',
         age: '৪৮ বছর',
         status: 'UNDER OBSERVATION',
-        motive: 'অবিনাশ মিত্রের ক্লিনিকের ফান্ড তছরুপের কথা জেনে গিয়েছিলেন এবং পুলিশে দেওয়ার হুমকি দিয়েছিলেন।',
-        alibi: 'রাত ১০:৪৫ নাগাদ ড্রয়িং রুমে অনিমেষ বসুর সাথে কফি খাচ্ছিলেন।',
-        notes: 'চিকিৎসক হওয়ার সুবাদে ভেষজ বিষ (Aconite) সম্পর্কে ওনার গভীর জ্ঞান রয়েছে।'
+        motive: 'অবিনাশ মিত্র ক্লিনিকের ফান্ড তছরুপের কথা জেনে গিয়েছিলেন এবং পুলিশে দেওয়ার হুমকি দিয়েছিলেন।',
+        alibi: 'রাত ১০:৪৫ থেকে ১১:১০ পর্যন্ত ড্রয়িং রুমে অনিমেষ বসুর সাথে কফি খাচ্ছিলেন, যা দুজন অতিথি নিশ্চিত করেছেন।',
+        notes: 'চিকিৎসক হওয়ার সুবাদে ভেষজ বিষ (Aconite) সম্পর্কে ওনার গভীর জ্ঞান রয়েছে। তবে তিনি জানিয়েছেন, সন্ধ্যা ৭টার লোডশেডিংয়ের পর তাঁর মেডিকেল ব্যাগ থেকে একটি ভেষজ নমুনার শিশি খোয়া গেছে।'
       },
       {
         id: 'SUS-03',
@@ -930,8 +934,8 @@
         role: 'পার্সোনাল সেক্রেটারি (Personal Secretary)',
         age: '৩২ বছর',
         status: 'PERSON OF INTEREST',
-        motive: 'গত ৫ বছর ধরে অবিনাশ মিত্রের ছায়াসঙ্গী। নতুন উইল সই হলে পুরনো উইলের সুবিধা হারানোর ভয়।',
-        alibi: 'রাত ১০:৩০ নাগাদ কিছু জরুরি ফাইল স্বাক্ষরের জন্য স্টাডি রুমের দিকে গিয়েছিলেন, তবে দাবি করেন দরজা বন্ধ থাকায় ফিরে আসেন।',
+        motive: 'গত ৫ বছর ধরে অবিনাশ মিত্রের ছায়াসঙ্গী। নতুন উইল সই হলে পুরনো উইলে পাওয়া ব্যক্তিগত তহবিলের সমস্ত টাকা হাতছাড়া হয়ে যেত।',
+        alibi: 'রাত ১০:৩০ নাগাদ জরুরি ফাইল নিয়ে স্টাডি রুমের দিকে গিয়েছিলেন, তবে ১০:৪৫ থেকে ১১:১৫ পর্যন্ত নিচের অফিস রুমে অ্যাকাউন্টস মেলাচ্ছিলেন বলে সিসিটিভিতে দেখা গেছে।',
         notes: 'পার্টিতে গাঢ় নীল সিল্ক পাঞ্জাবি ও বাঁ হাতের অনামিকায় রুপোর আংটি পরেছিলেন। অত্যন্ত শান্ত ও বুদ্ধিমান।'
       },
       {
@@ -943,7 +947,40 @@
         status: 'WITNESS / SUSPECT',
         motive: 'সম্প্রতি চুরির অপবাদে ওনাকে কাজ থেকে ছাড়িয়ে দেওয়ার কথা চলছিল।',
         alibi: 'রাত ১০:৩০-এ দুধ দিয়ে নিচে নিজের কোয়ার্টারে চলে যান এবং ঘুমিয়ে পড়েন।',
-        notes: 'রাত ১০:৩০-এ তিনিই শেষবার বাবুর ঘরে গরম দুধ দিয়ে এসেছিলেন।'
+        notes: 'রাত ১০:৩০-এ তিনিই শেষবার বাবুর ঘরে গরম দুধ দিয়ে এসেছিলেন। হাতে কোনো আংটি বা গয়না পরেন না।'
+      },
+      {
+        id: 'SUS-06',
+        name: 'মীরা দেবী',
+        englishName: 'MEERA DEVI',
+        role: 'মৃতের ছোট বোন (Younger Sister)',
+        age: '৫৪ বছর',
+        status: 'UNDER OBSERVATION',
+        motive: 'পৈতৃক মিত্র নিবাস এবং পারিবারিক ট্রাস্টের সম্পত্তির সমান ভাগ নিয়ে দাদা অবিনাশ মিত্রের সাথে দীর্ঘদিন ধরে মামলা চলছিল।',
+        alibi: 'রাত ১০:৩০ থেকে ১১:০৫ পর্যন্ত দোতলার বারান্দায় দাঁড়িয়ে ফোনে মেয়ের সাথে কথা বলছিলেন, যা তাঁর ফোনের কল লগে প্রমাণিত হয়েছে।',
+        notes: 'পার্টিতে অফ-হোয়াইট তসরের শাড়ি ও ডান হাতে হীরের আংটি পরেছিলেন। সন্ধ্যা ৭টার লোডশেডিংয়ের কিছুক্ষণ আগে স্টাডি রুমের আশেপাশে তাঁকে দেখা গিয়েছিল।'
+      },
+      {
+        id: 'SUS-07',
+        name: 'অরুণাভ সেনগুপ্ত',
+        englishName: 'ARUNAVA SENGUPTA',
+        role: 'পারিবারিক আইনজীবী (Family Lawyer)',
+        age: '৫১ বছর',
+        status: 'PERSON OF INTEREST',
+        motive: 'পুরনো উইল কার্যকর থাকলে ট্রাস্টের লিগ্যাল অ্যাডভাইজার হিসেবে বিপুল পরিমাণ কমিশন পেতেন, যা নতুন উইলে বাতিল হওয়ার কথা ছিল।',
+        alibi: 'রাত ১০:১৫ নাগাদ পার্টি থেকে বেরিয়ে নিজের গাড়িতে সল্টলেকের বাড়ির উদ্দেশ্যে রওনা দেন এবং ১০:৪৫-এ পথে থাকাকালীন অবিনাশ বাবুর হোয়াটসঅ্যাপ মেসেজ পান।',
+        notes: 'পুরনো ও নতুন—উভয় উইলের খসড়াই তাঁর কাছে ছিল। টোল প্লাজা ও ফোনের টাওয়ার লোকেশনে রাত ১০:৪৫-এ তিনি সল্টলেকের পথে ছিলেন বলে নিশ্চিত হয়েছে।'
+      },
+      {
+        id: 'SUS-08',
+        name: 'দেবাশিস চৌধুরী',
+        englishName: 'DEBASISH CHOWDHURY',
+        role: 'ব্যক্তিগত গাড়িচালক (Personal Chauffeur)',
+        age: '৩৬ বছর',
+        status: 'WITNESS / SUSPECT',
+        motive: 'জরুরি চিকিৎসার জন্য অবিনাশ মিত্রের কাছে বড় অঙ্কের টাকা ধার চেয়েছিলেন, কিন্তু কড়া ভাষায় প্রত্যাখ্যাত হয়ে অপমানিত বোধ করেন।',
+        alibi: 'রাত ১০:২০ থেকে ১১:১০ পর্যন্ত গ্যারেজের পাশের ঘরে বসে রেডিও শুনছিলেন বলে দাবি করেন।',
+        notes: 'সন্ধ্যায় ডাঃ অন্তর্জিতা মাইতির চেম্বার থেকে কিছু প্যাকেট ও ওষুধ মিত্র নিবাসে পৌঁছে দিয়েছিলেন। ডান হাতে তামার বালা পরেন, কোনো আংটি নয়।'
       }
     ];
 
@@ -951,12 +988,16 @@
     let activeTab = 'evidence';
     let isLockerUnlocked = false;
 
-    // --- CRIME NOIR AUDIO & HAPTIC VIBRATION ENGINE (WEB AUDIO API) ---
+    // --- CRIME NOIR AUDIO & iOS-COMPATIBLE HAPTIC VIBRATION ENGINE ---
     const SoundFX = (() => {
       let ctx = null;
       let isMuted = false;
       let ambientInterval = null;
       let ambientStep = 0;
+
+      const isIOS =
+        /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
       function getCtx() {
         try {
@@ -965,7 +1006,7 @@
             if (AudioCtx) ctx = new AudioCtx();
           }
           if (ctx && ctx.state === 'suspended') {
-            ctx.resume();
+            ctx.resume().catch(() => {});
           }
           return ctx;
         } catch (err) {
@@ -973,18 +1014,38 @@
         }
       }
 
-      // Safe Haptic Vibration Helper
+      // Unlock Web Audio synchronously on first touch/click (essential for iOS Safari)
+      function unlockAudio() {
+        const audio = getCtx();
+        if (audio && audio.state === 'suspended') {
+          audio.resume().catch(() => {});
+        }
+      }
+
+      // Cross-platform Haptic Feedback (Android navigator.vibrate + iOS 17.4+ native switch haptic)
       function vibrate(pattern) {
         try {
+          if (isIOS) {
+            const label = document.getElementById('ios-haptic-label');
+            if (label) {
+              label.click();
+              // For multi-pulse error/victory patterns on iOS, trigger a gentle second pulse
+              if (Array.isArray(pattern) && pattern.length > 2) {
+                setTimeout(() => {
+                  try { label.click(); } catch (_) {}
+                }, 90);
+              }
+            }
+            return;
+          }
           if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
             navigator.vibrate(pattern);
           }
         } catch (err) {
-          // Ignore on unsupported devices
+          // Silently ignore on unsupported browsers
         }
       }
 
-      // Play a synthesized tone with envelope
       function playTone(freq, duration, type = 'sine', volume = 0.12, delay = 0, slideTo = null) {
         if (isMuted) return;
         const audio = getCtx();
@@ -1015,7 +1076,6 @@
         }
       }
 
-      // Short filtered noise burst for paper rustle / typewriter feel
       function playNoise(duration = 0.08, volume = 0.07, filterFreq = 900) {
         if (isMuted) return;
         const audio = getCtx();
@@ -1048,21 +1108,18 @@
         }
       }
 
-      // Subtle 1990s Detective Noir Suspense Ambient Loop (D Minor)
       function startAmbient() {
         stopAmbient();
         if (isMuted) return;
-        const bassPattern = [73.42, 73.42, 87.31, 65.41, 73.42, 69.30, 82.41, 55.00]; // D2, F2, C2, C#2, E2, A1
-        const eerieNotes = [293.66, 349.23, 329.63, 277.18, 220.00]; // D4, F4, E4, C#4, A3
+        const bassPattern = [73.42, 73.42, 87.31, 65.41, 73.42, 69.30, 82.41, 55.00];
+        const eerieNotes = [293.66, 349.23, 329.63, 277.18, 220.00];
 
         const playPulse = () => {
           if (isMuted) return;
           const bass = bassPattern[ambientStep % bassPattern.length];
-          // Low brooding noir heartbeat bass
           playTone(bass, 1.4, 'triangle', 0.045, 0);
           playTone(bass * 2, 0.9, 'sine', 0.018, 0.05);
 
-          // Occasional haunting detective piano/vibraphone note
           if (ambientStep % 2 === 1) {
             const note = eerieNotes[Math.floor(ambientStep / 2) % eerieNotes.length];
             playTone(note, 1.8, 'sine', 0.025, 0.25);
@@ -1082,45 +1139,35 @@
       }
 
       return {
-        // Mechanical typewriter/switch click
+        unlockAudio,
         playClick() {
           vibrate(18);
           playNoise(0.035, 0.09, 1800);
           playTone(420, 0.04, 'square', 0.035, 0, 180);
         },
-
-        // Dossier tab switch sound
         playTab() {
           vibrate(22);
           playNoise(0.06, 0.08, 1200);
           playTone(260, 0.06, 'triangle', 0.05, 0, 340);
         },
-
-        // Opening an evidence file (paper rustle + ink stamp thud)
         playFileOpen() {
           vibrate([20, 30, 18]);
           playNoise(0.11, 0.1, 1100);
           playTone(135, 0.12, 'triangle', 0.1, 0.03, 65);
           playTone(520, 0.08, 'sine', 0.03, 0.06);
         },
-
-        // Classified Archive Login Granted (Noir chord swell)
         playLoginSuccess() {
           vibrate([30, 40, 65]);
-          playTone(146.83, 0.85, 'triangle', 0.09, 0);     // D3
-          playTone(220.00, 0.85, 'sine', 0.07, 0.12);      // A3
-          playTone(261.63, 0.95, 'sine', 0.06, 0.24);      // C4
-          playTone(349.23, 1.1, 'sine', 0.06, 0.36);       // F4
+          playTone(146.83, 0.85, 'triangle', 0.09, 0);
+          playTone(220.00, 0.85, 'sine', 0.07, 0.12);
+          playTone(261.63, 0.95, 'sine', 0.06, 0.24);
+          playTone(349.23, 1.1, 'sine', 0.06, 0.36);
         },
-
-        // Access Denied / Wrong Deduction Buzzer
         playError() {
           vibrate([85, 50, 125]);
           playTone(145, 0.18, 'sawtooth', 0.09, 0, 125);
           playTone(110, 0.28, 'sawtooth', 0.1, 0.19, 85);
         },
-
-        // Encrypted Locker Safe Unlocked (11:00 PM)
         playVaultUnlock() {
           vibrate([25, 40, 25, 40, 90]);
           playNoise(0.05, 0.1, 2400);
@@ -1129,29 +1176,23 @@
           playTone(587.33, 0.35, 'sine', 0.1, 0.32);
           playTone(880, 0.75, 'sine', 0.08, 0.45);
         },
-
-        // Crime Thriller / Detective Case Closed Victory Theme
         playVictoryNoir() {
           vibrate([45, 40, 45, 40, 160]);
-          // Dramatic bass timpani hits + Noir minor-to-heroic resolution
-          playTone(73.42, 0.5, 'triangle', 0.16, 0);       // D2 boom
-          playTone(293.66, 0.35, 'triangle', 0.09, 0.02);  // D4
-          playTone(349.23, 0.35, 'triangle', 0.09, 0.24);  // F4
-          playTone(440.00, 0.45, 'triangle', 0.1, 0.46);   // A4
-          playTone(415.30, 0.25, 'sine', 0.08, 0.74);      // G#4 noir tension
-          playTone(440.00, 0.3, 'triangle', 0.1, 0.96);    // A4
-          // Final Case Closed Triumph Chord (D Major resolution)
-          playTone(73.42, 1.6, 'triangle', 0.15, 1.25);    // D2
-          playTone(146.83, 1.6, 'triangle', 0.1, 1.25);    // D3
-          playTone(293.66, 1.7, 'sine', 0.09, 1.28);       // D4
-          playTone(369.99, 1.7, 'sine', 0.08, 1.32);       // F#4
-          playTone(440.00, 1.8, 'sine', 0.09, 1.36);       // A4
-          playTone(587.33, 2.0, 'sine', 0.1, 1.42);        // D5
+          playTone(73.42, 0.5, 'triangle', 0.16, 0);
+          playTone(293.66, 0.35, 'triangle', 0.09, 0.02);
+          playTone(349.23, 0.35, 'triangle', 0.09, 0.24);
+          playTone(440.00, 0.45, 'triangle', 0.1, 0.46);
+          playTone(415.30, 0.25, 'sine', 0.08, 0.74);
+          playTone(440.00, 0.3, 'triangle', 0.1, 0.96);
+          playTone(73.42, 1.6, 'triangle', 0.15, 1.25);
+          playTone(146.83, 1.6, 'triangle', 0.1, 1.25);
+          playTone(293.66, 1.7, 'sine', 0.09, 1.28);
+          playTone(369.99, 1.7, 'sine', 0.08, 1.32);
+          playTone(440.00, 1.8, 'sine', 0.09, 1.36);
+          playTone(587.33, 2.0, 'sine', 0.1, 1.42);
         },
-
         startAmbient,
         stopAmbient,
-
         toggleMute() {
           isMuted = !isMuted;
           if (isMuted) {
@@ -1194,11 +1235,13 @@
     // --- RENDER EVIDENCE CARDS ---
     function renderEvidenceCards() {
       const grid = document.getElementById('evidence-grid');
+      if (!grid) return;
+
       grid.innerHTML = EVIDENCE_ITEMS.map(
         (item) => `
           <div
             data-evidence-id="${item.id}"
-            class="evidence-card group relative bg-[#1C1917] hover:bg-[#231F1C] border border-stone-700 hover:border-[#D97706] rounded-none p-5 transition-colors duration-150 cursor-pointer flex flex-col justify-between shadow-lg"
+            class="tactile-btn evidence-card group relative bg-[#1C1917] hover:bg-[#231F1C] border border-stone-700 hover:border-[#D97706] rounded-none p-5 transition-colors duration-150 cursor-pointer flex flex-col justify-between shadow-lg"
           >
             <div class="pointer-events-none absolute top-3.5 right-3.5 border border-[#991B1B]/60 text-[#991B1B]/70 font-jetbrains text-[9px] font-bold px-1.5 py-0.5 rotate-3 uppercase tracking-widest">
               CONFIDENTIAL
@@ -1249,6 +1292,8 @@
     // --- RENDER SUSPECTS CARDS ---
     function renderSuspectsCards() {
       const grid = document.getElementById('suspects-grid');
+      if (!grid) return;
+
       grid.innerHTML = SUSPECTS.map(
         (suspect) => `
           <div class="bg-[#1C1917] border border-stone-700 rounded-none p-5 relative">
@@ -1319,7 +1364,6 @@
 
       let html = '';
 
-      // Special Visual Highlight for Broken Wall Clock
       if (item.visualType === 'clock') {
         html += `
           <div class="bg-[#141210] border border-stone-700 p-4 flex flex-col sm:flex-row items-center gap-4">
@@ -1344,7 +1388,6 @@
         `;
       }
 
-      // Special Visual Highlight for WhatsApp Forensic Log
       if (item.visualType === 'whatsapp') {
         html += `
           <div class="bg-[#12100E] border border-stone-700 p-4 space-y-2">
@@ -1353,7 +1396,7 @@
               <span>DELIVERED: 22:45 HRS [READ]</span>
             </div>
             <div class="bg-[#F4EFE6] text-stone-900 font-bengali-serif text-xs sm:text-sm p-3.5 border-l-4 border-[#991B1B]">
-              "অরুণাভ, আমি চূড়ান্ত সিদ্ধান্ত নিয়ে নিয়েছি। পুরনো উইলটা বাতিল করতে হবে। আগামীকাল অর্থাৎ ১লা জানুয়ারি সকাল ১০টায় নতুন উইলের কাগজপত্র নিয়ে মিত্র নিবাসে চলে এসো। আমি সই করে দেব। সব সম্পত্তি একমাত্র রাহুলই পাবে।"
+              "অরুণাভ, আমি চূড়ান্ত সিদ্ধান্ত নিয়ে নিয়েছি। পুরনো উইলটা বাতিল করতে হবে। রাহুলের জুয়ার দেনা আর বেহিসেবি জীবনযাপন আমি আর বরদাস্ত করব না। আগামীকাল ১লা জানুয়ারি সকাল ১০টায় নতুন উইলের কাগজপত্র নিয়ে মিত্র নিবাসে চলে এসো—আমি ওকে পৈতৃক বাড়ির উত্তরাধিকার থেকেও পুরোপুরি বঞ্চিত করে সমস্ত সম্পত্তি চ্যারিটি ট্রাস্টে দান করে দেব।"
               <div class="text-[10px] text-stone-600 text-right font-jetbrains mt-1.5 font-bold">
                 TIMESTAMP: 10:45 PM // VERIFIED
               </div>
@@ -1362,7 +1405,6 @@
         `;
       }
 
-      // Tactile Document Styling
       if (item.visualType === 'diary') {
         html += `
           <div class="py-2 px-1">
@@ -1421,26 +1463,29 @@
       SoundFX.playTab();
       activeTab = tabName;
 
-      // Hide all sections
       document.querySelectorAll('.tab-section').forEach((sec) => {
         sec.classList.add('hidden');
       });
-      document.getElementById(`section-${tabName}`).classList.remove('hidden');
+      const targetSec = document.getElementById(`section-${tabName}`);
+      if (targetSec) targetSec.classList.remove('hidden');
 
-      // Reset all tab buttons
       const tabs = ['evidence', 'suspects', 'locker', 'verdict'];
       tabs.forEach((t) => {
         const btn = document.getElementById(`tab-btn-${t}`);
+        if (!btn) return;
         const isSelected = t === tabName;
         if (isSelected) {
-          const borderColor = t === 'verdict' ? 'border-[#991B1B] shadow-[inset_0_2px_0_0_#991B1B]' : 'border-[#D97706] shadow-[inset_0_2px_0_0_#D97706]';
-          btn.className = `tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#1C1917] ${borderColor} text-[#F4EFE6]`;
+          const borderColor =
+            t === 'verdict'
+              ? 'border-[#991B1B] shadow-[inset_0_2px_0_0_#991B1B]'
+              : 'border-[#D97706] shadow-[inset_0_2px_0_0_#D97706]';
+          btn.className = `tactile-btn tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#1C1917] ${borderColor} text-[#F4EFE6]`;
         } else {
-          btn.className = 'tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700';
+          btn.className =
+            'tactile-btn tab-btn flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700';
         }
       });
 
-      // Update Icon colors
       document.getElementById('tab-icon-evidence').setAttribute('class', `w-4 h-4 shrink-0 ${tabName === 'evidence' ? 'text-[#D97706]' : 'text-stone-500'}`);
       document.getElementById('tab-icon-suspects').setAttribute('class', `w-4 h-4 shrink-0 ${tabName === 'suspects' ? 'text-[#D97706]' : 'text-stone-500'}`);
       document.getElementById('tab-icon-verdict').setAttribute('class', `w-4 h-4 shrink-0 ${tabName === 'verdict' ? 'text-[#991B1B]' : 'text-stone-500'}`);
@@ -1453,10 +1498,15 @@
       }
     }
 
-    // --- EVENT LISTENERS ---
+    // --- INITIALIZATION & EVENT LISTENERS ---
     document.addEventListener('DOMContentLoaded', () => {
       renderEvidenceCards();
       renderSuspectsCards();
+
+      // Unlock AudioContext on first user interaction (fixes iOS Safari audio restrictions)
+      ['touchstart', 'click'].forEach((evt) => {
+        document.addEventListener(evt, () => SoundFX.unlockAudio(), { once: true, passive: true });
+      });
 
       // Auto-Fill Credentials Button
       document.getElementById('auto-fill-btn').addEventListener('click', () => {
@@ -1471,12 +1521,11 @@
         const muted = SoundFX.toggleMute();
         document.getElementById('sound-icon-on').classList.toggle('hidden', muted);
         document.getElementById('sound-icon-off').classList.toggle('hidden', !muted);
-        const label = document.getElementById('sound-toggle-label');
-        label.textContent = muted ? 'AUDIO: OFF' : 'AUDIO: ON';
+        document.getElementById('sound-toggle-label').textContent = muted ? 'AUDIO: OFF' : 'AUDIO: ON';
         const btn = document.getElementById('sound-toggle-btn');
         btn.className = muted
-          ? 'flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-stone-800 border border-stone-700 text-xs font-jetbrains text-stone-500 transition cursor-pointer'
-          : 'flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-stone-800 border border-[#D97706]/60 text-xs font-jetbrains text-[#D97706] transition cursor-pointer';
+          ? 'tactile-btn flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-stone-800 border border-stone-700 text-xs font-jetbrains text-stone-500 transition cursor-pointer'
+          : 'tactile-btn flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-stone-800 border border-[#D97706]/60 text-xs font-jetbrains text-[#D97706] transition cursor-pointer';
       });
 
       // Agent Login Form Submit
@@ -1513,7 +1562,7 @@
             </svg>
             <span>OPEN CLASSIFIED DOSSIER</span>
           `;
-        }, 550);
+        }, 500);
       });
 
       // Lock File / Logout Button
@@ -1559,7 +1608,6 @@
           document.getElementById('locker-locked-view').classList.add('hidden');
           document.getElementById('locker-unlocked-view').classList.remove('hidden');
 
-          // Update Tab Label & Icon to Unlocked
           document.getElementById('tab-sub-locker').textContent = 'VAULT UNLOCKED';
           const lockerIconWrap = document.getElementById('tab-icon-locker');
           lockerIconWrap.className = 'shrink-0 text-emerald-400';
@@ -1598,7 +1646,7 @@
         if (!killerVal || !weaponVal || !timeVal) return;
 
         if (
-          killerVal === 'সৌম্যজিৎ শেখর সাহা' &&
+          killerVal === 'রাহুল মিত্র' &&
           weaponVal === 'poison_milk' &&
           timeVal === '11:00 PM'
         ) {
@@ -1606,7 +1654,6 @@
           failureBox.classList.add('hidden');
           successBox.classList.remove('hidden');
 
-          // Update Case Status Badge in Top Header
           const statusBadge = document.getElementById('case-status-badge');
           statusBadge.textContent = 'CASE CLOSED';
           statusBadge.className =
