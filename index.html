@@ -186,27 +186,6 @@
             <span>OPEN CLASSIFIED DOSSIER</span>
           </button>
         </form>
-
-        <!-- Helper Note for Testing / Demo -->
-        <div class="mt-6 pt-4 border-t border-stone-800">
-          <div class="bg-[#1C1917] border border-stone-700 rounded-none p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-            <div class="font-jetbrains text-[11px] text-stone-400 leading-relaxed">
-              <span class="text-[#D97706] font-bold block">
-                Demo ID: AGENT-007 | Passcode: MITRA2026
-              </span>
-              <span class="font-bengali-serif text-xs text-stone-400">
-                তদন্ত শুরু করতে উপরের আইডি ও পাসকোড ব্যবহার করুন।
-              </span>
-            </div>
-            <button
-              id="autofill-btn"
-              type="button"
-              class="shrink-0 px-3 py-1.5 bg-[#0D0D0D] hover:bg-stone-800 border border-[#D97706]/60 text-[#D97706] font-jetbrains text-[11px] uppercase tracking-wider rounded-none transition cursor-pointer"
-            >
-              Auto-Fill
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -247,7 +226,7 @@
             <div class="hidden md:flex flex-col items-end font-jetbrains text-[11px]">
               <span class="text-[#D97706] flex items-center gap-1.5 font-bold">
                 <span class="w-2 h-2 bg-[#D97706] inline-block"></span>
-                INVESTIGATOR: AGENT-007
+                INVESTIGATOR: ABIR
               </span>
               <span class="text-stone-500">ARCHIVE CLOCK // <span id="terminal-clock">00:00:00</span> IST</span>
             </div>
@@ -527,7 +506,7 @@
                 <strong class="font-bold text-[#991B1B]">বিশেষ ধারা (Clause 4B):</strong>
                 আমার বিশ্বস্ত পার্সোনাল সেক্রেটারি
                 <span class="font-bold underline decoration-[#991B1B] decoration-2">
-                  তানিয়া রায় (Tania Roy)
+                  সৌম্যজিৎ শেখর সাহা (Soumyajit Sekhar Saha)
                 </span>
                 -কে আমার ব্যক্তিগত ফান্ড থেকে নগদ
                 <span class="font-bold text-[#991B1B]">
@@ -595,9 +574,9 @@
                 >
                   <option value="">-- সন্দেহভাজন নির্বাচন করুন --</option>
                   <option value="রাহুল মিত্র">রাহুল মিত্র (ছেলে)</option>
-                  <option value="ডাঃ সুমিতা সেন">ডাঃ সুমিতা সেন (পারিবারিক চিকিৎসক)</option>
+                  <option value="ডাঃ অন্তর্জিতা মাইতি">ডাঃ অন্তর্জিতা মাইতি (পারিবারিক চিকিৎসক)</option>
                   <option value="অনিমেষ বসু">অনিমেষ বসু (বিজনেস পার্টনার)</option>
-                  <option value="তানিয়া রায়">তানিয়া রায় (পার্সোনাল সেক্রেটারি)</option>
+                  <option value="সৌম্যজিৎ শেখর সাহা">সৌম্যজিৎ শেখর সাহা (পার্সোনাল সেক্রেটারি)</option>
                   <option value="বিমল দা">বিমল দা (কেয়ারটেকার)</option>
                 </select>
               </div>
@@ -686,7 +665,7 @@
                 </p>
                 <p>
                   <strong>৩. খুনি শনাক্তকরণ:</strong> নতুন উইল সই হলে পুরনো উইলের ২ কোটি টাকা হাতছাড়া হয়ে যেত—এই ভয়েই পার্সোনাল সেক্রেটারি
-                  <strong class="text-[#991B1B]">তানিয়া রায়</strong> দুধে বিষ মেশান। ডায়েরিতে লেখা বাঁ হাতের অনামিকার রুপোর আংটিটিও তাঁরই ছিল!
+                  <strong class="text-[#991B1B]">সৌম্যজিৎ শেখর সাহা</strong> দুধে বিষ মেশান। ডায়েরিতে লেখা বাঁ হাতের অনামিকার রুপোর আংটিটিও তাঁরই ছিল!
                 </p>
               </div>
             </div>
@@ -845,7 +824,7 @@
         timestamp: '31 DEC // 21:30 HRS',
         summary: 'রাতের পার্টিতে উপস্থিত অতিথিদের পোশাক ও গয়নার নোট।',
         tag: 'VISUAL CLUE',
-        content: `মিত্র নিবাস - বর্ষবরণ পার্টির উপস্থিতি ও পর্যবেক্ষণ নোট:\n\n• রাহুল মিত্র (ছেলে): কালো স্যুট, বাঁ হাতে দামি রোলেক্স ঘড়ি। কোনো আংটি পরেননি।\n• ডাঃ সুমিতা সেন (চিকিৎসক): মেরুন রঙের শাড়ি, সোনার বালা এবং ডান হাতে পান্নার আংটি।\n• অনিমেষ বসু (পার্টনার): নেভি ব্লু ব্লেজার, ডান হাতের কনিষ্ঠায় মোটা সোনার আংটি।\n• তানিয়া রায় (পার্সোনাল সেক্রেটারি): গাঢ় নীল রঙের সিল্ক শাড়ি (Dark Blue Silk Saree), এবং বাঁ হাতের অনামিকায় (Left Ring Finger) একটি কারুকাজ করা রুপোর আংটি (Silver Ring) পরেছিলেন।\n• বিমল দা (কেয়ারটেকার): সাধারণ সাদা ধুতি-পাঞ্জাবি, হাতে কোনো গয়না নেই।`,
+        content: `মিত্র নিবাস - বর্ষবরণ পার্টির উপস্থিতি ও পর্যবেক্ষণ নোট:\n\n• রাহুল মিত্র (ছেলে): কালো স্যুট, বাঁ হাতে দামি রোলেক্স ঘড়ি। কোনো আংটি পরেননি।\n• ডাঃ অন্তর্জিতা মাইতি (চিকিৎসক): মেরুন রঙের শাড়ি, সোনার বালা এবং ডান হাতে পান্নার আংটি।\n• অনিমেষ বসু (পার্টনার): নেভি ব্লু ব্লেজার, ডান হাতের কনিষ্ঠায় মোটা সোনার আংটি।\n• সৌম্যজিৎ শেখর সাহা (পার্সোনাল সেক্রেটারি): গাঢ় নীল রঙের সিল্ক পাঞ্জাবি (Dark Blue Silk Panjabi), এবং বাঁ হাতের অনামিকায় (Left Ring Finger) একটি কারুকাজ করা রুপোর আংটি (Silver Ring) পরেছিলেন।\n• বিমল দা (কেয়ারটেকার): সাধারণ সাদা ধুতি-পাঞ্জাবি, হাতে কোনো গয়না নেই।`,
         visualType: 'guestlist'
       },
       {
@@ -875,8 +854,8 @@
       },
       {
         id: 'SUS-02',
-        name: 'ডাঃ সুমিতা সেন',
-        englishName: 'DR. SUMITA SEN',
+        name: 'ডাঃ অন্তর্জিতা মাইতি',
+        englishName: 'DR. ANTORJITA MAITY',
         role: 'পারিবারিক চিকিৎসক (Family Doctor)',
         age: '৪৮ বছর',
         status: 'UNDER OBSERVATION',
@@ -892,19 +871,19 @@
         age: '৫৫ বছর',
         status: 'UNDER OBSERVATION',
         motive: 'কোম্পানির শেয়ার হস্তান্তর নিয়ে অবিনাশ মিত্রের সাথে বড়সড় আইনি বিবাদ চলছিল।',
-        alibi: 'ড্রয়িং রুমে ডাঃ সুমিতা সেনের সাথে ছিলেন এবং ১১:০০ টার সময় বাজি ফাটানো দেখছিলেন।',
+        alibi: 'ড্রয়িং রুমে ডাঃ অন্তর্জিতা মাইতির সাথে ছিলেন এবং ১১:০০ টার সময় বাজি ফাটানো দেখছিলেন।',
         notes: 'মেজাজ অত্যন্ত রগচটা। স্টাডি রুমের পিতলের ফুলদানিতে ওনার আঙুলের ছাপ পাওয়া গেছে (সন্ধ্যায় ফুলদানিটি সরিয়েছিলেন বলে দাবি)।'
       },
       {
         id: 'SUS-04',
-        name: 'তানিয়া রায়',
-        englishName: 'TANIA ROY',
+        name: 'সৌম্যজিৎ শেখর সাহা',
+        englishName: 'SOUMYAJIT SEKHAR SAHA',
         role: 'পার্সোনাল সেক্রেটারি (Personal Secretary)',
         age: '৩২ বছর',
         status: 'PERSON OF INTEREST',
         motive: 'গত ৫ বছর ধরে অবিনাশ মিত্রের ছায়াসঙ্গী। নতুন উইল সই হলে পুরনো উইলের সুবিধা হারানোর ভয়।',
         alibi: 'রাত ১০:৩০ নাগাদ কিছু জরুরি ফাইল স্বাক্ষরের জন্য স্টাডি রুমের দিকে গিয়েছিলেন, তবে দাবি করেন দরজা বন্ধ থাকায় ফিরে আসেন।',
-        notes: 'পার্টিতে গাঢ় নীল সিল্ক শাড়ি ও বাঁ হাতের অনামিকায় রুপোর আংটি পরেছিলেন। অত্যন্ত শান্ত ও বুদ্ধিমতী।'
+        notes: 'পার্টিতে গাঢ় নীল সিল্ক পাঞ্জাবি ও বাঁ হাতের অনামিকায় রুপোর আংটি পরেছিলেন। অত্যন্ত শান্ত ও বুদ্ধিমান।'
       },
       {
         id: 'SUS-05',
@@ -1213,13 +1192,6 @@
       renderEvidenceCards();
       renderSuspectsCards();
 
-      // Auto-Fill Demo Credentials
-      document.getElementById('autofill-btn').addEventListener('click', () => {
-        document.getElementById('agent-id-input').value = 'AGENT-007';
-        document.getElementById('passcode-input').value = 'MITRA2026';
-        document.getElementById('login-error').classList.add('hidden');
-      });
-
       // Agent Login Form Submit
       document.getElementById('login-form').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -1236,7 +1208,7 @@
         `;
 
         setTimeout(() => {
-          if (agentVal === 'AGENT-007' && passVal === 'MITRA2026') {
+          if (agentVal === 'ABIR' && passVal === '9500') {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('dashboard-screen').classList.remove('hidden');
           } else {
@@ -1331,7 +1303,7 @@
         if (!killerVal || !weaponVal || !timeVal) return;
 
         if (
-          killerVal === 'তানিয়া রায়' &&
+          killerVal === 'সৌম্যজিৎ শেখর সাহা' &&
           weaponVal === 'poison_milk' &&
           timeVal === '11:00 PM'
         ) {
