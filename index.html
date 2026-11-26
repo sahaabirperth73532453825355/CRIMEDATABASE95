@@ -1,0 +1,1235 @@
+import React, { useState, useEffect } from 'react';
+import {
+  ShieldAlert,
+  Lock,
+  Unlock,
+  FileText,
+  Users,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  AlertTriangle,
+  Eye,
+  Search,
+  Terminal,
+  LogOut,
+  Fingerprint,
+  Award,
+  KeyRound,
+  X,
+  Skull
+} from 'lucide-react';
+
+// --- CASE DATA (AUTHENTIC BENGALI & ENGLISH HYBRID) ---
+
+const EVIDENCE_ITEMS = [
+  {
+    id: 'EV-01',
+    code: 'LALBAZAR/DOC-2026/01-A',
+    category: 'WITNESS STATEMENT',
+    title: 'বিমল দার জবানবন্দি (Caretaker Statement)',
+    timestamp: '01 JAN 1996 // 01:15 HRS',
+    summary: 'লোডশেডিং এবং রাতের খাবার সংক্রান্ত বয়ান।',
+    tag: 'CRITICAL TIMELINE',
+    content: `জবানবন্দি নং: ০১\nনাম: বিমল চন্দ্র দাস (বয়স ৫৮), কেয়ারটেকার, মিত্র নিবাস।\n\n"স্যার, ৩১শে ডিসেম্বর রাতে বাড়িতে ছোটখাটো পার্টি চলছিল। ঠিক সন্ধ্যা ৭:০০ টা নাগাদ উত্তর কলকাতার এই পাড়ায় হঠাৎ লোডশেডিং হয়ে যায়। প্রায় ২০ মিনিট কারেন্ট ছিল না—৭:২০ নাগাদ আবার কারেন্ট আসে। বাবু (অবিনাশ মিত্র) তখন স্টাডি রুমেই ছিলেন। রাত ১০:৩০ নাগাদ আমি বাবুর জন্য এক গ্লাস গরম দুধ স্টাডি রুমের টেবিলে রেখে আসি। বাবু প্রতিদিন ঘুমানোর আগে গরম দুধ খেতেন। এরপর আমি নিচে নিজের কোয়ার্টারে চলে যাই।"`,
+    visualType: 'statement'
+  },
+  {
+    id: 'EV-02',
+    code: 'LALBAZAR/DOC-2026/01-B',
+    category: 'UTILITY & REPAIR LOG',
+    title: 'পুরনো ইলেকট্রিশিয়ানের রসিদ (Electrician Receipt)',
+    timestamp: '14 NOV 1995 // ARCHIVED',
+    summary: 'স্টাডি রুমের দেয়াল ঘড়ি মেরামত সংক্রান্ত নোট।',
+    tag: 'TECHNICAL CLUE',
+    content: `রয়্যাল ইলেকট্রিক্যাল ওয়ার্কস, শ্যামবাজার\nতারিখ: ১৪/১১/২০২৫\nগ্রাহক: শ্রী অবিনাশ মিত্র (মিত্র নিবাস)\n\nকাজের বিবরণ: দোতলার স্টাডি রুমের অ্যান্টিক ইলেকট্রিক ওয়াল ক্লক (Electric Wall Clock) সারাই করা হলো।\n\nবিশেষ দ্রষ্টব্য (Mechanic Note): "এই ঘড়িটি সরাসরি মেইন লাইনের সাথে যুক্ত এবং এতে কোনো ব্যাটারি ব্যাকআপ নেই। অর্থাৎ, বাড়িতে লোডশেডিং হলে ঘড়িটি ততক্ষণ বন্ধ হয়ে থাকে এবং কারেন্ট এলে আবার সেখান থেকেই চলতে শুরু করে। লোডশেডিং হলে ঘড়িটি ঠিক তত মিনিট স্লো হয়ে যাবে।"`,
+    visualType: 'receipt'
+  },
+  {
+    id: 'EV-03',
+    code: 'LALBAZAR/IMG-2026/01-C',
+    category: 'CRIME SCENE PHOTO',
+    title: 'ভাঙা দেয়াল ঘড়ির ছবি (Broken Wall Clock)',
+    timestamp: '01 JAN 1996 // 00:30 HRS',
+    summary: 'ধস্তাধস্তির সময় মেঝেতে পড়ে ভেঙে যাওয়া ঘড়ি।',
+    tag: 'TIME ANCHOR',
+    content: `ফরেনসিক ফটোগ্রাফি লগ #০৪:\n\nস্টাডি রুমের মেঝেতে পিতলের ফুলদানির পাশেই কাঁচ ভাঙা অবস্থায় ইলেকট্রিক দেয়াল ঘড়িটি পাওয়া গেছে। আঘাতের তীব্রতায় ঘড়িটির কাঁটা ঠিক ১০:৪০ PM-এ আটকে গেছে।\n\n[বিশ্লেষণ নোট: ঘড়িটি ১০:৪০ দেখালেও, সেটিই কি আসল সময় ছিল? সন্ধ্যা ৭:০০ টার লোডশেডিংয়ের কথা মাথায় রাখুন।]`,
+    visualType: 'clock'
+  },
+  {
+    id: 'EV-04',
+    code: 'LALBAZAR/DIG-2026/01-D',
+    category: 'DIGITAL FORENSICS',
+    title: 'অবিনাশ মিত্রের শেষ WhatsApp মেসেজ',
+    timestamp: '31 DEC // 22:45 HRS',
+    summary: 'পারিবারিক আইনজীবী ব্যারিস্টার সেনগুপ্তকে পাঠানো মেসেজ।',
+    tag: 'DIGITAL TIMESTAMP',
+    content: `ডিভাইস: iPhone 15 Pro (অবিনাশ মিত্র)\nপ্রাপক: ব্যারিস্টার অরুণাভ সেনগুপ্ত (Family Lawyer)\nসার্ভার টাইমস্ট্যাম্প: ৩১ ডিসেম্বর ২০২৫, রাত ১০:৪৫ PM (Blue Tick - Read)\n\nমেসেজ টেক্সট:\n"অরুণাভ, আমি চূড়ান্ত সিদ্ধান্ত নিয়ে নিয়েছি। পুরনো উইলটা বাতিল করতে হবে। আগামীকাল অর্থাৎ ১লা জানুয়ারি সকাল ১০টায় নতুন উইলের কাগজপত্র নিয়ে মিত্র নিবাসে চলে এসো। আমি সই করে দেব। সব সম্পত্তি একমাত্র রাহুলই পাবে।"`,
+    visualType: 'whatsapp'
+  },
+  {
+    id: 'EV-05',
+    code: 'LALBAZAR/MED-2026/01-E',
+    category: 'FORENSIC AUTOPSY',
+    title: 'প্রাথমিক ময়নাতদন্ত রিপোর্ট (Post-Mortem Note)',
+    timestamp: '01 JAN // 04:20 HRS',
+    summary: 'মৃত্যুর আসল কারণ এবং মাথার আঘাতের বিশ্লেষণ।',
+    tag: 'CAUSE OF DEATH',
+    content: `কলকাতা পুলিশ মর্গ - প্রাথমিক ফরেনসিক নোট\nমৃত: অবিনাশ মিত্র (৬২)\n\n১. মাথার পেছনে ভারী পিতলের ফুলদানির (Brass Vase) আঘাতের চিহ্ন রয়েছে। কিন্তু ক্ষতস্থানে রক্ত জমাট বাঁধার ধরন দেখে নিশ্চিত হওয়া গেছে যে এই আঘাতটি 'Post-Mortem' অর্থাৎ মৃত্যুর পরে করা হয়েছে—সম্ভবত তদন্তকারীদের বিভ্রান্ত করার জন্য!\n২. ভিসেরা ও পাকস্থলীর নমুনা পরীক্ষায় দুধের সাথে 'Aconite' (মিঠা বিষ / ভেষজ বিষ) মেশানোর প্রমাণ মিলেছে। বিষক্রিয়ায় হৃদযন্ত্র স্তব্ধ হয়েই তাঁর মৃত্যু হয়েছে।`,
+    visualType: 'autopsy'
+  },
+  {
+    id: 'EV-06',
+    code: 'LALBAZAR/INT-2026/01-F',
+    category: 'SURVEILLANCE & NOTES',
+    title: 'পার্টি গেস্ট লিস্ট ও পোশাকের বিবরণ',
+    timestamp: '31 DEC // 21:30 HRS',
+    summary: 'রাতের পার্টিতে উপস্থিত অতিথিদের পোশাক ও গয়নার নোট।',
+    tag: 'VISUAL CLUE',
+    content: `মিত্র নিবাস - বর্ষবরণ পার্টির উপস্থিতি ও পর্যবেক্ষণ নোট:\n\n• রাহুল মিত্র (ছেলে): কালো স্যুট, বাঁ হাতে দামি রোলেক্স ঘড়ি। কোনো আংটি পরেননি।\n• ডাঃ সুমিতা সেন (চিকিৎসক): মেরুন রঙের শাড়ি, সোনার বালা এবং ডান হাতে পান্নার আংটি।\n• অনিমেষ বসু (পার্টনার): নেভি ব্লু ব্লেজার, ডান হাতের কনিষ্ঠায় মোটা সোনার আংটি।\n• তানিয়া রায় (পার্সোনাল সেক্রেটারি): গাঢ় নীল রঙের সিল্ক শাড়ি (Dark Blue Silk Saree), এবং বাঁ হাতের অনামিকায় (Left Ring Finger) একটি কারুকাজ করা রুপোর আংটি (Silver Ring) পরেছিলেন।\n• বিমল দা (কেয়ারটেকার): সাধারণ সাদা ধুতি-পাঞ্জাবি, হাতে কোনো গয়না নেই।`,
+    visualType: 'guestlist'
+  },
+  {
+    id: 'EV-07',
+    code: 'LALBAZAR/DSK-2026/01-G',
+    category: 'CONFIDENTIAL DIARY',
+    title: 'অজ্ঞাতনামা ডায়েরির ছেঁড়া পাতা (Killer’s Diary)',
+    timestamp: 'RECOVERED // FIREPLACE',
+    summary: 'স্টাডি রুমের ফায়ারপ্লেসের পাশ থেকে উদ্ধার হওয়া অর্ধদগ্ধ পাতা।',
+    tag: 'SMOKING GUN',
+    content: `"ও ভেবেছিল আমাকে এভাবে ছুড়ে ফেলে দেবে? বছরের পর বছর ওর সব নোংরা হিসেব সামলালাম, আর আজ নতুন উইল করে আমাকে রাস্তায় বসানোর প্ল্যান করছে! আজ রাতেই সব শেষ করব। যখন গরম দুধের গ্লাসটায় বিষের ফোঁটাগুলো মেশাচ্ছিলাম, আমার হাত একটুও কাঁপেনি। গ্লাসটা নামিয়ে রাখার সময় টেবিলের ল্যাম্পের আলো আমার বাঁ হাতের অনামিকার রুপোর আংটিটায় (Silver ring on my left ring finger) ঠিকরে পড়েছিল... ঠিক যেন আমার জয়ের সংকেত। ১লা জানুয়ারির সূর্য আর ওকে দেখতে হবে না।"`,
+    visualType: 'diary'
+  }
+];
+
+const SUSPECTS = [
+  {
+    id: 'SUS-01',
+    name: 'রাহুল মিত্র',
+    englishName: 'RAHUL MITRA',
+    role: 'মৃতের একমাত্র পুত্র (Son)',
+    age: '২৯ বছর',
+    status: 'PRIME SUSPECT #1',
+    motive: 'জুয়ায় প্রচুর টাকা দেনা হয়ে গিয়েছিল। বাবার সাথে সম্পত্তি ও টাকার ভাগ নিয়ে প্রায়ই তীব্র অশান্তি হতো।',
+    alibi: 'রাত ১০:৩০ থেকে ১১:১৫ পর্যন্ত বাগানে ফোনে কথা বলছিলেন বলে দাবি করেন, তবে কোনো প্রত্যক্ষদর্শী নেই।',
+    notes: 'পার্টির সময় বাবার সাথে উত্তপ্ত বাক্যবিনিময় করতে দেখা গেছে। তবে নতুন উইল হলে রাহুলই সব সম্পত্তি পেত।'
+  },
+  {
+    id: 'SUS-02',
+    name: 'ডাঃ সুমিতা সেন',
+    englishName: 'DR. SUMITA SEN',
+    role: 'পারিবারিক চিকিৎসক (Family Doctor)',
+    age: '৪৮ বছর',
+    status: 'UNDER OBSERVATION',
+    motive: 'অবিনাশ মিত্রের ক্লিনিকের ফান্ড তছরুপের কথা জেনে গিয়েছিলেন এবং পুলিশে দেওয়ার হুমকি দিয়েছিলেন।',
+    alibi: 'রাত ১০:৪৫ নাগাদ ড্রয়িং রুমে অনিমেষ বসুর সাথে কফি খাচ্ছিলেন।',
+    notes: 'চিকিৎসক হওয়ার সুবাদে ভেষজ বিষ (Aconite) সম্পর্কে ওনার গভীর জ্ঞান রয়েছে।'
+  },
+  {
+    id: 'SUS-03',
+    name: 'অনিমেষ বসু',
+    englishName: 'ANIMESH BASU',
+    role: 'বিজনেস পার্টনার (Business Partner)',
+    age: '৫৫ বছর',
+    status: 'UNDER OBSERVATION',
+    motive: 'কোম্পানির শেয়ার হস্তান্তর নিয়ে অবিনাশ মিত্রের সাথে বড়সড় আইনি বিবাদ চলছিল।',
+    alibi: 'ড্রয়িং রুমে ডাঃ সুমিতা সেনের সাথে ছিলেন এবং ১১:০০ টার সময় বাজি ফাটানো দেখছিলেন।',
+    notes: 'মেজাজ অত্যন্ত রগচটা। স্টাডি রুমের পিতলের ফুলদানিতে ওনার আঙুলের ছাপ পাওয়া গেছে (সন্ধ্যায় ফুলদানিটি সরিয়েছিলেন বলে দাবি)।'
+  },
+  {
+    id: 'SUS-04',
+    name: 'তানিয়া রায়',
+    englishName: 'TANIA ROY',
+    role: 'পার্সোনাল সেক্রেটারি (Personal Secretary)',
+    age: '৩২ বছর',
+    status: 'PERSON OF INTEREST',
+    motive: 'গত ৫ বছর ধরে অবিনাশ মিত্রের ছায়াসঙ্গী। নতুন উইল সই হলে পুরনো উইলের সুবিধা হারানোর ভয়।',
+    alibi: 'রাত ১০:৩০ নাগাদ কিছু জরুরি ফাইল স্বাক্ষরের জন্য স্টাডি রুমের দিকে গিয়েছিলেন, তবে দাবি করেন দরজা বন্ধ থাকায় ফিরে আসেন।',
+    notes: 'পার্টিতে গাঢ় নীল সিল্ক শাড়ি ও বাঁ হাতের অনামিকায় রুপোর আংটি পরেছিলেন। অত্যন্ত শান্ত ও বুদ্ধিমতী।'
+  },
+  {
+    id: 'SUS-05',
+    name: 'বিমল দা',
+    englishName: 'BIMAL DA',
+    role: 'পুরনো কেয়ারটেকার (Caretaker)',
+    age: '৫৮ বছর',
+    status: 'WITNESS / SUSPECT',
+    motive: 'সম্প্রতি চুরির অপবাদে ওনাকে কাজ থেকে ছাড়িয়ে দেওয়ার কথা চলছিল।',
+    alibi: 'রাত ১০:৩০-এ দুধ দিয়ে নিচে নিজের কোয়ার্টারে চলে যান এবং ঘুমিয়ে পড়েন।',
+    notes: 'রাত ১০:৩০-এ তিনিই শেষবার বাবুর ঘরে গরম দুধ দিয়ে এসেছিলেন।'
+  }
+];
+
+export default function App() {
+  // Authentication State
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [agentId, setAgentId] = useState('');
+  const [passcode, setPasscode] = useState('');
+  const [loginError, setLoginError] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  // Navigation & Modal State
+  const [activeTab, setActiveTab] = useState('evidence'); // 'evidence' | 'suspects' | 'locker' | 'verdict'
+  const [selectedEvidence, setSelectedEvidence] = useState(null);
+
+  // Encrypted Locker State
+  const [lockerInput, setLockerInput] = useState('');
+  const [isLockerUnlocked, setIsLockerUnlocked] = useState(false);
+  const [lockerError, setLockerError] = useState('');
+
+  // Final Verdict Form State
+  const [selectedKiller, setSelectedKiller] = useState('');
+  const [selectedWeapon, setSelectedWeapon] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
+  const [verdictResult, setVerdictResult] = useState(null); // null | 'SUCCESS' | 'FAILURE'
+
+  // Current live clock for terminal vibe
+  const [terminalTime, setTerminalTime] = useState('');
+
+  // Load Google Fonts dynamically & set up vintage archive styling
+  useEffect(() => {
+    const linkId = 'kolkata-archive-google-fonts';
+    if (!document.getElementById(linkId)) {
+      const link = document.createElement('link');
+      link.id = linkId;
+      link.rel = 'stylesheet';
+      link.href =
+        'https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Noto+Serif+Bengali:wght@400;500;600;700&family=Tiro+Bangla:ital@0;1&display=swap';
+      document.head.appendChild(link);
+    }
+  }, []);
+
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      setTerminalTime(
+        now.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        })
+      );
+    };
+    updateClock();
+    const timer = setInterval(updateClock, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Handle Agent Login
+  const handleLogin = (e) => {
+    e.preventDefault();
+    setLoginError('');
+    setIsAuthenticating(true);
+
+    setTimeout(() => {
+      if (
+        agentId.trim().toUpperCase() === 'AGENT-007' &&
+        passcode.trim().toUpperCase() === 'MITRA2026'
+      ) {
+        setIsLoggedIn(true);
+      } else {
+        setLoginError('ACCESS DENIED // INVALID CREDENTIALS RECORDED');
+      }
+      setIsAuthenticating(false);
+    }, 550);
+  };
+
+  // Auto-fill demo credentials helper
+  const fillDemoCredentials = () => {
+    setAgentId('AGENT-007');
+    setPasscode('MITRA2026');
+    setLoginError('');
+  };
+
+  // Handle Encrypted Locker Unlock
+  const handleUnlockLocker = (e) => {
+    e.preventDefault();
+    const cleaned = lockerInput.trim().toUpperCase().replace(/\s+/g, '');
+    if (
+      cleaned === '11:00' ||
+      cleaned === '11:00PM' ||
+      cleaned === '11PM' ||
+      cleaned === '23:00'
+    ) {
+      setIsLockerUnlocked(true);
+      setLockerError('');
+    } else {
+      setLockerError(
+        'DECRYPTION FAILED // ভুল সময়! লোডশেডিং এবং ভাঙা ঘড়ির হিসেবটা আবার মিলিয়ে দেখুন।'
+      );
+    }
+  };
+
+  // Handle Final Verdict Submission
+  const handleVerdictSubmit = (e) => {
+    e.preventDefault();
+    if (!selectedKiller || !selectedWeapon || !selectedTime) {
+      return;
+    }
+
+    const isKillerCorrect = selectedKiller === 'তানিয়া রায়';
+    const isWeaponCorrect = selectedWeapon === 'poison_milk';
+    const isTimeCorrect = selectedTime === '11:00 PM';
+
+    if (isKillerCorrect && isWeaponCorrect && isTimeCorrect) {
+      setVerdictResult('SUCCESS');
+    } else {
+      setVerdictResult('FAILURE');
+    }
+  };
+
+  // Reusable Film Grain & Custom Font Styles
+  const GlobalArchiveStyles = () => (
+    <style>{`
+      .font-cinzel {
+        font-family: 'Cinzel', Georgia, serif;
+      }
+      .font-bengali-serif {
+        font-family: 'Noto Serif Bengali', 'Tiro Bangla', Georgia, serif;
+      }
+      .font-tiro {
+        font-family: 'Tiro Bangla', 'Noto Serif Bengali', Georgia, serif;
+      }
+      .font-jetbrains {
+        font-family: 'JetBrains Mono', monospace;
+      }
+      .film-grain {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E");
+      }
+      .lined-notebook {
+        background-color: #F4EFE6;
+        background-image: repeating-linear-gradient(
+          transparent,
+          transparent 31px,
+          #CBD5E1 31px,
+          #CBD5E1 32px
+        );
+        line-height: 32px;
+      }
+      .thermal-paper {
+        background-color: #EFECE6;
+        background-image: radial-gradient(rgba(120, 113, 108, 0.08) 1px, transparent 0);
+        background-size: 16px 16px;
+      }
+      .ink-stamp {
+        border: 2.5px solid #991B1B;
+        color: #991B1B;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        box-shadow: inset 0 0 0 1px rgba(153, 27, 27, 0.35);
+      }
+    `}</style>
+  );
+
+  // ============================================================================
+  // SCREEN 1: 1990s CLASSIFIED AGENT LOGIN TERMINAL
+  // ============================================================================
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-[#0D0D0D] text-stone-200 relative overflow-hidden flex items-center justify-center p-4 selection:bg-[#991B1B] selection:text-[#F4EFE6]">
+        <GlobalArchiveStyles />
+
+        {/* Film Grain & Subtle Vignette */}
+        <div className="pointer-events-none fixed inset-0 z-10 film-grain" />
+        <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_center,rgba(153,27,27,0.10)_0%,rgba(13,13,13,0.95)_80%)]" />
+
+        {/* Main Dossier Login Container */}
+        <div className="relative z-20 w-full max-w-lg bg-[#1C1917] border border-stone-700 rounded-none shadow-[0_25px_70px_rgba(0,0,0,0.95)] p-1.5">
+          {/* Inner Double-Border Frame */}
+          <div className="border border-stone-600/80 bg-[#141210] p-6 sm:p-8 relative">
+            {/* Top Classified Strip */}
+            <div className="border-b-2 border-double border-stone-700 pb-3 mb-6 flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2 text-[#D97706] font-jetbrains text-[11px] tracking-[0.18em] font-bold uppercase">
+                <ShieldAlert className="w-4 h-4 text-[#991B1B]" />
+                <span>TOP SECRET // AUTHORIZED PERSONNEL ONLY</span>
+              </div>
+              <span className="font-jetbrains text-[10px] text-stone-500 tracking-widest">
+                LALBAZAR-HQ // 1996
+              </span>
+            </div>
+
+            {/* Stamp */}
+            <div className="hidden sm:block absolute top-14 right-6 ink-stamp font-jetbrains text-[10px] font-bold px-2.5 py-1 rotate-6 opacity-80 pointer-events-none">
+              CONFIDENTIAL
+              <span className="block text-[8px] tracking-widest border-t border-[#991B1B]/50 mt-0.5 pt-0.5">
+                LALBAZAR ARCHIVE
+              </span>
+            </div>
+
+            {/* Department Title */}
+            <div className="mb-7">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-none bg-[#1C1917] border border-stone-600 mb-4">
+                <Fingerprint className="w-6 h-6 text-[#D97706]" />
+              </div>
+              <p className="font-cinzel text-xs tracking-[0.26em] text-[#D97706] font-bold uppercase mb-1.5">
+                Kolkata Police Detective Bureau
+              </p>
+              <h1 className="font-bengali-serif text-2xl sm:text-3xl font-bold text-[#F4EFE6] tracking-wide leading-snug">
+                রহস্যের ২৪ পাতা: মিত্র নিবাস
+              </h1>
+              <p className="font-jetbrains text-xs text-stone-400 mt-1.5 tracking-wider">
+                FORENSIC CASE FILE // <span className="text-[#991B1B] font-bold bg-[#991B1B]/15 px-1.5 py-0.5 border border-[#991B1B]/40">CASE #2026/01</span>
+              </p>
+            </div>
+
+            {/* Login Form */}
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block font-jetbrains text-[11px] uppercase tracking-[0.16em] text-stone-400 mb-1.5">
+                  AGENT ID // অফিসার পরিচয়পত্র
+                </label>
+                <div className="relative">
+                  <Terminal className="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={agentId}
+                    onChange={(e) => setAgentId(e.target.value)}
+                    placeholder="ENTER AGENT ID"
+                    className="w-full bg-[#0D0D0D] border border-stone-700 focus:border-[#D97706] rounded-none pl-10 pr-4 py-2.5 font-jetbrains text-sm text-[#F4EFE6] placeholder-stone-600 focus:outline-none transition"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-jetbrains text-[11px] uppercase tracking-[0.16em] text-stone-400 mb-1.5">
+                  ARCHIVE PASSCODE // গোপন সংকেত
+                </label>
+                <div className="relative">
+                  <KeyRound className="w-4 h-4 text-stone-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    value={passcode}
+                    onChange={(e) => setPasscode(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-[#0D0D0D] border border-stone-700 focus:border-[#D97706] rounded-none pl-10 pr-4 py-2.5 font-jetbrains text-sm text-[#F4EFE6] placeholder-stone-600 focus:outline-none transition"
+                    required
+                  />
+                </div>
+              </div>
+
+              {loginError && (
+                <div className="bg-[#991B1B]/20 border border-[#991B1B] text-red-200 px-3.5 py-2.5 rounded-none font-jetbrains text-xs flex items-center gap-2">
+                  <AlertTriangle className="w-4 h-4 text-[#991B1B] shrink-0" />
+                  <span>{loginError}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isAuthenticating}
+                className="w-full bg-[#991B1B] hover:bg-[#7F1D1D] border border-red-400/30 text-[#F4EFE6] font-cinzel font-bold text-sm tracking-[0.2em] uppercase py-3 rounded-none shadow-md transition flex items-center justify-center gap-2 cursor-pointer"
+              >
+                {isAuthenticating ? (
+                  <>
+                    <span className="w-4 h-4 border-2 border-[#F4EFE6]/30 border-t-[#F4EFE6] rounded-full animate-spin" />
+                    <span className="font-jetbrains text-xs">VERIFYING CLEARANCE...</span>
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-4 h-4" />
+                    <span>OPEN CLASSIFIED DOSSIER</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Helper Note for Testing / Demo */}
+            <div className="mt-6 pt-4 border-t border-stone-800">
+              <div className="bg-[#1C1917] border border-stone-700 rounded-none p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="font-jetbrains text-[11px] text-stone-400 leading-relaxed">
+                  <span className="text-[#D97706] font-bold block">
+                    Demo ID: AGENT-007 | Passcode: MITRA2026
+                  </span>
+                  <span className="font-bengali-serif text-xs text-stone-400">
+                    তদন্ত শুরু করতে উপরের আইডি ও পাসকোড ব্যবহার করুন।
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={fillDemoCredentials}
+                  className="shrink-0 px-3 py-1.5 bg-[#0D0D0D] hover:bg-stone-800 border border-[#D97706]/60 text-[#D97706] font-jetbrains text-[11px] uppercase tracking-wider rounded-none transition cursor-pointer"
+                >
+                  Auto-Fill
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // SCREEN 2: 1990s KOLKATA DETECTIVE BUREAU ARCHIVE DASHBOARD
+  // ============================================================================
+  return (
+    <div className="min-h-screen bg-[#0D0D0D] text-stone-200 relative overflow-x-hidden selection:bg-[#991B1B] selection:text-[#F4EFE6]">
+      <GlobalArchiveStyles />
+
+      {/* Subtle Film Grain Overlay */}
+      <div className="pointer-events-none fixed inset-0 z-40 film-grain" />
+
+      {/* TOP CLASSIFIED ARCHIVE HEADER */}
+      <header className="sticky top-0 z-30 bg-[#161311]/95 backdrop-blur-sm border-b-2 border-stone-700 shadow-2xl">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3.5">
+          {/* Upper Bar: Department & Ink Stamp */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-stone-800">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-none bg-[#1C1917] border border-stone-600 flex items-center justify-center shrink-0">
+                <ShieldAlert className="w-5 h-5 text-[#991B1B]" />
+              </div>
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="font-cinzel text-xs sm:text-sm tracking-[0.2em] text-[#D97706] font-bold uppercase">
+                    KOLKATA POLICE DETECTIVE BUREAU
+                  </span>
+                  <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] font-jetbrains font-bold tracking-widest border border-[#991B1B] text-[#991B1B] bg-[#991B1B]/10">
+                    CONFIDENTIAL // LALBAZAR ARCHIVE
+                  </span>
+                </div>
+                <h1 className="font-bengali-serif text-lg sm:text-xl font-bold text-[#F4EFE6] leading-tight mt-0.5">
+                  রহস্যের ২৪ পাতা: মিত্র নিবাস
+                </h1>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div className="hidden md:flex flex-col items-end font-jetbrains text-[11px]">
+                <span className="text-[#D97706] flex items-center gap-1.5 font-bold">
+                  <span className="w-2 h-2 bg-[#D97706] inline-block" />
+                  INVESTIGATOR: AGENT-007
+                </span>
+                <span className="text-stone-500">ARCHIVE CLOCK // {terminalTime} IST</span>
+              </div>
+              <button
+                onClick={() => setIsLoggedIn(false)}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-none bg-[#1C1917] hover:bg-[#991B1B] border border-stone-600 hover:border-[#991B1B] text-xs font-jetbrains text-stone-300 hover:text-white transition cursor-pointer"
+                title="Lock Archive"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline tracking-wider">LOCK FILE</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Case Metadata Ledger Strip */}
+          <div className="pt-3 grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 text-xs">
+            <div className="bg-[#0D0D0D] border border-stone-700 rounded-none px-3 py-2 flex items-center justify-between">
+              <span className="font-jetbrains text-[11px] text-stone-500">CASE ID:</span>
+              <span className="font-jetbrains font-bold text-[#D97706]">#2026/01</span>
+            </div>
+            <div className="bg-[#0D0D0D] border border-stone-700 rounded-none px-3 py-2 flex items-center justify-between">
+              <span className="font-jetbrains text-[11px] text-stone-500">VICTIM:</span>
+              <span className="font-bengali-serif font-bold text-[#F4EFE6]">অবিনাশ মিত্র (৬২)</span>
+            </div>
+            <div className="bg-[#0D0D0D] border border-stone-700 rounded-none px-3 py-2 flex items-center justify-between">
+              <span className="font-jetbrains text-[11px] text-stone-500">LOCATION:</span>
+              <span className="font-bengali-serif font-semibold text-stone-300 truncate ml-2">
+                মিত্র নিবাস, উত্তর কলকাতা
+              </span>
+            </div>
+            <div className="bg-[#0D0D0D] border border-stone-700 rounded-none px-3 py-2 flex items-center justify-between">
+              <span className="font-jetbrains text-[11px] text-stone-500">STATUS:</span>
+              {verdictResult === 'SUCCESS' ? (
+                <span className="font-jetbrains font-bold text-emerald-400 bg-emerald-950/80 border border-emerald-700 px-2 py-0.5">
+                  CASE CLOSED
+                </span>
+              ) : (
+                <span className="font-jetbrains font-bold text-red-300 bg-[#991B1B]/30 border border-[#991B1B] px-2 py-0.5">
+                  UNSOLVED
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* MAIN ARCHIVE WORKSPACE */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        {/* DOSSIER FOLDER TABS */}
+        <nav className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-6 border-b border-stone-800 pb-4">
+          <button
+            onClick={() => setActiveTab('evidence')}
+            className={`flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer ${
+              activeTab === 'evidence'
+                ? 'bg-[#1C1917] border-[#D97706] text-[#F4EFE6] shadow-[inset_0_2px_0_0_#D97706]'
+                : 'bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700'
+            }`}
+          >
+            <FileText
+              className={`w-4 h-4 shrink-0 ${
+                activeTab === 'evidence' ? 'text-[#D97706]' : 'text-stone-500'
+              }`}
+            />
+            <div className="text-left">
+              <div className="font-bengali-serif font-bold text-sm leading-tight">প্রমাণপত্র</div>
+              <div className="font-jetbrains text-[10px] tracking-wider opacity-75">
+                EVIDENCE FILES [07]
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('suspects')}
+            className={`flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer ${
+              activeTab === 'suspects'
+                ? 'bg-[#1C1917] border-[#D97706] text-[#F4EFE6] shadow-[inset_0_2px_0_0_#D97706]'
+                : 'bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700'
+            }`}
+          >
+            <Users
+              className={`w-4 h-4 shrink-0 ${
+                activeTab === 'suspects' ? 'text-[#D97706]' : 'text-stone-500'
+              }`}
+            />
+            <div className="text-left">
+              <div className="font-bengali-serif font-bold text-sm leading-tight">সন্দেহভাজন তালিকা</div>
+              <div className="font-jetbrains text-[10px] tracking-wider opacity-75">
+                SUSPECTS LOG [05]
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('locker')}
+            className={`flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer ${
+              activeTab === 'locker'
+                ? 'bg-[#1C1917] border-[#D97706] text-[#F4EFE6] shadow-[inset_0_2px_0_0_#D97706]'
+                : 'bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700'
+            }`}
+          >
+            {isLockerUnlocked ? (
+              <Unlock
+                className={`w-4 h-4 shrink-0 ${
+                  activeTab === 'locker' ? 'text-emerald-400' : 'text-emerald-500'
+                }`}
+              />
+            ) : (
+              <Lock
+                className={`w-4 h-4 shrink-0 ${
+                  activeTab === 'locker' ? 'text-[#D97706]' : 'text-stone-500'
+                }`}
+              />
+            )}
+            <div className="text-left">
+              <div className="font-bengali-serif font-bold text-sm leading-tight">গোপন ফোল্ডার</div>
+              <div className="font-jetbrains text-[10px] tracking-wider opacity-75">
+                {isLockerUnlocked ? 'VAULT UNLOCKED' : 'ENCRYPTED LOCKER'}
+              </div>
+            </div>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('verdict')}
+            className={`flex items-center justify-start gap-3 px-4 py-3 rounded-none border transition cursor-pointer ${
+              activeTab === 'verdict'
+                ? 'bg-[#1C1917] border-[#991B1B] text-[#F4EFE6] shadow-[inset_0_2px_0_0_#991B1B]'
+                : 'bg-[#12100E] border-stone-800 text-stone-400 hover:text-stone-200 hover:border-stone-700'
+            }`}
+          >
+            <Award
+              className={`w-4 h-4 shrink-0 ${
+                activeTab === 'verdict' ? 'text-[#991B1B]' : 'text-stone-500'
+              }`}
+            />
+            <div className="text-left">
+              <div className="font-bengali-serif font-bold text-sm leading-tight">খুনি শনাক্ত করুন</div>
+              <div className="font-jetbrains text-[10px] tracking-wider opacity-75">
+                FINAL VERDICT
+              </div>
+            </div>
+          </button>
+        </nav>
+
+        {/* ========================================================================
+            TAB 1: EVIDENCE FILES (প্রমাণপত্র)
+           ======================================================================== */}
+        {activeTab === 'evidence' && (
+          <section className="space-y-5">
+            {/* Double-Bordered Section Header */}
+            <div className="bg-[#1C1917] border border-stone-700 p-1">
+              <div className="border border-stone-600/70 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="font-cinzel text-xs tracking-[0.2em] text-[#D97706] uppercase font-bold">
+                    FORENSIC EXHIBIT INDEX // SECTION I
+                  </div>
+                  <h2 className="font-bengali-serif text-lg sm:text-xl font-bold text-[#F4EFE6] flex items-center gap-2 mt-0.5">
+                    <Search className="w-4 h-4 text-[#991B1B]" />
+                    <span>সংগৃহীত প্রমাণপত্র ও ফরেনসিক নথি (Evidence Files)</span>
+                  </h2>
+                  <p className="font-bengali-serif text-xs sm:text-sm text-stone-400 mt-1">
+                    প্রতিটি ফাইলে ক্লিক করে মূল নথি পরীক্ষা করুন। সময়ের হিসেব এবং সূত্রগুলো মিলিয়ে প্রকৃত খুনিকে চিহ্নিত করুন।
+                  </p>
+                </div>
+                <div className="self-start sm:self-center ink-stamp font-jetbrains text-[10px] font-bold px-3 py-1 bg-[#141210]">
+                  7 EXHIBITS LOGGED
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {EVIDENCE_ITEMS.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => setSelectedEvidence(item)}
+                  className="group relative bg-[#1C1917] hover:bg-[#231F1C] border border-stone-700 hover:border-[#D97706] rounded-none p-5 transition-colors duration-150 cursor-pointer flex flex-col justify-between shadow-lg"
+                >
+                  {/* Authentic Lalbazar Ink Stamp */}
+                  <div className="pointer-events-none absolute top-3.5 right-3.5 border border-[#991B1B]/60 text-[#991B1B]/70 font-jetbrains text-[9px] font-bold px-1.5 py-0.5 rotate-3 uppercase tracking-widest">
+                    CONFIDENTIAL
+                  </div>
+
+                  <div>
+                    <div className="flex items-center gap-2 font-jetbrains text-[11px] text-[#D97706] mb-2.5">
+                      <span className="px-2 py-0.5 bg-[#0D0D0D] border border-stone-700 font-bold">
+                        {item.id}
+                      </span>
+                      <span className="text-stone-400 truncate text-[10px] tracking-wider">
+                        {item.category}
+                      </span>
+                    </div>
+
+                    <h3 className="font-bengali-serif text-base sm:text-lg font-bold text-[#F4EFE6] group-hover:text-[#D97706] transition mb-2 leading-snug">
+                      {item.title}
+                    </h3>
+
+                    <p className="font-bengali-serif text-xs sm:text-sm text-stone-400 leading-relaxed mb-4">
+                      {item.summary}
+                    </p>
+                  </div>
+
+                  <div className="pt-3 border-t border-stone-800 flex items-center justify-between font-jetbrains text-[11px]">
+                    <span className="text-stone-500">{item.timestamp}</span>
+                    <span className="text-[#D97706] group-hover:underline flex items-center gap-1 font-bold tracking-wider">
+                      <Eye className="w-3.5 h-3.5" />
+                      INSPECT
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ========================================================================
+            TAB 2: SUSPECTS DATABASE (সন্দেহভাজন তালিকা)
+           ======================================================================== */}
+        {activeTab === 'suspects' && (
+          <section className="space-y-5">
+            <div className="bg-[#1C1917] border border-stone-700 p-1">
+              <div className="border border-stone-600/70 p-4">
+                <div className="font-cinzel text-xs tracking-[0.2em] text-[#D97706] uppercase font-bold">
+                  INTERROGATION RECORDS // SECTION II
+                </div>
+                <h2 className="font-bengali-serif text-lg sm:text-xl font-bold text-[#F4EFE6] flex items-center gap-2 mt-0.5">
+                  <Users className="w-4 h-4 text-[#D97706]" />
+                  <span>সন্দেহভাজনদের প্রোফাইল ও জেরা নোট (Suspects Database)</span>
+                </h2>
+                <p className="font-bengali-serif text-xs sm:text-sm text-stone-400 mt-1">
+                  ঘটনার রাতে মিত্র নিবাসে উপস্থিত ৫ জন প্রধান সন্দেহভাজনের মোটিভ, অ্যালিবাই এবং গোয়েন্দা পর্যবেক্ষণ।
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {SUSPECTS.map((suspect) => (
+                <div
+                  key={suspect.id}
+                  className="bg-[#1C1917] border border-stone-700 rounded-none p-5 relative"
+                >
+                  {/* Police Record Header */}
+                  <div className="flex flex-wrap items-start justify-between gap-2 pb-3 border-b-2 border-double border-stone-700">
+                    <div>
+                      <div className="flex items-center gap-2 font-jetbrains">
+                        <span className="text-xs text-[#D97706] bg-[#0D0D0D] border border-stone-700 px-2 py-0.5 font-bold">
+                          {suspect.id}
+                        </span>
+                        <span className="text-xs text-stone-400">{suspect.age}</span>
+                      </div>
+                      <h3 className="font-bengali-serif text-xl font-bold text-[#F4EFE6] mt-1.5">
+                        {suspect.name}{' '}
+                        <span className="text-xs font-cinzel tracking-widest font-bold text-stone-400">
+                          // {suspect.englishName}
+                        </span>
+                      </h3>
+                      <p className="font-bengali-serif text-xs text-[#D97706] font-medium mt-0.5">
+                        {suspect.role}
+                      </p>
+                    </div>
+
+                    <span className="font-jetbrains text-[10px] font-bold px-2.5 py-1 border border-[#991B1B] bg-[#991B1B]/15 text-red-300 tracking-wider">
+                      {suspect.status}
+                    </span>
+                  </div>
+
+                  <div className="mt-4 space-y-3 text-xs sm:text-sm">
+                    <div className="bg-[#141210] border border-stone-800 p-3">
+                      <span className="font-jetbrains text-[10px] uppercase tracking-widest text-[#991B1B] font-bold block mb-1">
+                        MOTIVE // সম্ভাব্য উদ্দেশ্য:
+                      </span>
+                      <p className="font-bengali-serif text-stone-200 leading-relaxed">
+                        {suspect.motive}
+                      </p>
+                    </div>
+
+                    <div className="bg-[#141210] border border-stone-800 p-3">
+                      <span className="font-jetbrains text-[10px] uppercase tracking-widest text-stone-400 font-bold block mb-1">
+                        ALIBI // ঘটনার সময়ের অবস্থান:
+                      </span>
+                      <p className="font-bengali-serif text-stone-200 leading-relaxed">
+                        {suspect.alibi}
+                      </p>
+                    </div>
+
+                    <div className="bg-[#141210] border border-stone-800 p-3">
+                      <span className="font-jetbrains text-[10px] uppercase tracking-widest text-[#D97706] font-bold block mb-1">
+                        DETECTIVE NOTES // পর্যবেক্ষণ:
+                      </span>
+                      <p className="font-bengali-serif text-stone-200 leading-relaxed">
+                        {suspect.notes}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ========================================================================
+            TAB 3: ENCRYPTED LOCKER (গোপন ফোল্ডার)
+           ======================================================================== */}
+        {activeTab === 'locker' && (
+          <section className="max-w-2xl mx-auto">
+            {!isLockerUnlocked ? (
+              <div className="bg-[#1C1917] border border-stone-700 p-1.5 shadow-2xl">
+                <div className="border border-stone-600/80 bg-[#141210] p-6 sm:p-8 text-center">
+                  <div className="w-14 h-14 bg-[#1C1917] border border-stone-600 flex items-center justify-center mx-auto mb-4">
+                    <Lock className="w-7 h-7 text-[#D97706]" />
+                  </div>
+
+                  <span className="font-cinzel text-xs tracking-[0.22em] text-[#D97706] font-bold uppercase">
+                    RESTRICTED ARCHIVE VAULT // CLEARANCE LEVEL 4
+                  </span>
+                  <h2 className="font-bengali-serif text-xl sm:text-2xl font-bold text-[#F4EFE6] mt-1.5 mb-2">
+                    গোপন ফোল্ডার: অবিনাশ মিত্রের পার্সোনাল লকার
+                  </h2>
+                  <p className="font-bengali-serif text-xs sm:text-sm text-stone-300 max-w-md mx-auto leading-relaxed mb-6">
+                    এই গোপন লকারটি খুলতে <strong className="text-[#D97706]">মৃত্যুর আসল সময় (True Time of Murder)</strong> প্রবেশ করান।
+                    <br />
+                    <span className="text-xs text-stone-500">
+                      (সূত্র: ভাঙা দেয়াল ঘড়ির সময় + সন্ধ্যা ৭টার লোডশেডিংয়ের সময় যোগ করুন)
+                    </span>
+                  </p>
+
+                  <form onSubmit={handleUnlockLocker} className="max-w-xs mx-auto space-y-3">
+                    <div className="relative">
+                      <Clock className="w-4 h-4 text-[#D97706] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                      <input
+                        type="text"
+                        value={lockerInput}
+                        onChange={(e) => setLockerInput(e.target.value)}
+                        placeholder="e.g. 11:00 PM"
+                        className="w-full bg-[#0D0D0D] border border-stone-600 focus:border-[#D97706] rounded-none pl-10 pr-4 py-3 font-jetbrains text-center text-base text-[#F4EFE6] placeholder-stone-600 focus:outline-none"
+                        required
+                      />
+                    </div>
+
+                    {lockerError && (
+                      <div className="bg-[#991B1B]/20 border border-[#991B1B] text-red-200 p-2.5 font-bengali-serif text-xs leading-relaxed">
+                        {lockerError}
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      className="w-full bg-[#D97706] hover:bg-amber-600 text-[#0D0D0D] font-cinzel font-extrabold text-xs tracking-[0.2em] uppercase py-3 rounded-none transition cursor-pointer"
+                    >
+                      UNLOCK SEALED RECORD
+                    </button>
+                  </form>
+                </div>
+              </div>
+            ) : (
+              <div className="bg-[#1C1917] border border-stone-600 p-2 shadow-2xl">
+                {/* Header Strip */}
+                <div className="bg-[#141210] border border-stone-700 px-5 py-3.5 mb-3 flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <Unlock className="w-5 h-5 text-emerald-500" />
+                    <div>
+                      <span className="font-jetbrains text-[10px] text-emerald-400 font-bold uppercase tracking-widest block">
+                        LOCKER OPENED // VERIFIED TIME: 11:00 PM
+                      </span>
+                      <h3 className="font-bengali-serif text-base sm:text-lg font-bold text-[#F4EFE6]">
+                        উদ্ধারকৃত গোপন নথি: পূর্ববর্তী উইল দলিল (Old Will)
+                      </h3>
+                    </div>
+                  </div>
+                  <span className="ink-stamp font-jetbrains text-[10px] font-bold px-2.5 py-0.5 bg-[#F4EFE6]">
+                    TOP SECRET
+                  </span>
+                </div>
+
+                {/* Aged Parchment Legal Will Paper */}
+                <div className="bg-[#F4EFE6] text-stone-900 border-2 border-stone-400 p-6 sm:p-8 shadow-inner relative">
+                  <div className="border-b-2 border-double border-stone-800 pb-3 mb-5 text-center">
+                    <p className="font-cinzel text-xs text-[#991B1B] tracking-[0.22em] font-bold uppercase">
+                      LAST WILL & TESTAMENT // ARCHIVED DEED
+                    </p>
+                    <h4 className="font-bengali-serif text-xl sm:text-2xl font-bold text-stone-900 mt-1">
+                      শ্রী অবিনাশ মিত্রের পূর্ববর্তী উইল দলিল
+                    </h4>
+                    <p className="font-jetbrains text-[11px] text-stone-600 mt-1">
+                      রেজিস্ট্রেশন নং: ALIPORE-IV/2024 | তারিখ: ১২ই মার্চ, ২০২৪
+                    </p>
+                  </div>
+
+                  <div className="font-bengali-serif text-sm sm:text-base space-y-4 leading-relaxed text-stone-900">
+                    <p>
+                      "আমি অবিনাশ মিত্র, সজ্ঞানে ও সুস্থ মস্তিষ্কে এই উইল করিতেছি যে, আমার অবর্তমানে আমার স্থাবর ও অস্থাবর সম্পত্তির নিম্নলিখিত বণ্টন কার্যকর হইবে:
+                    </p>
+
+                    <div className="bg-stone-200/80 border-l-4 border-[#991B1B] p-4 text-stone-950">
+                      <strong className="font-bold text-[#991B1B]">বিশেষ ধারা (Clause 4B):</strong>{' '}
+                      আমার বিশ্বস্ত পার্সোনাল সেক্রেটারি{' '}
+                      <span className="font-bold underline decoration-[#991B1B] decoration-2">
+                        তানিয়া রায় (Tania Roy)
+                      </span>
+                      -কে আমার ব্যক্তিগত ফান্ড থেকে নগদ{' '}
+                      <span className="font-bold text-[#991B1B]">
+                        ২ কোটি টাকা (₹2,00,00,000)
+                      </span>{' '}
+                      এবং সল্টলেকের ফ্ল্যাটটি প্রদান করা হইবে।"
+                    </div>
+
+                    <p>
+                      <strong>শর্তাবলী:</strong> যদি ১লা জানুয়ারি, ২০২৬ বা তাহার পূর্বে আমি কোনো নতুন উইল স্বাক্ষর না করি, তবে এই পুরনো উইলটিই চূড়ান্ত ও আইনত বৈধ বলিয়া গণ্য হইবে।"
+                    </p>
+                  </div>
+
+                  <div className="mt-6 pt-3 border-t border-stone-400 flex items-center justify-between font-jetbrains text-xs text-stone-700">
+                    <span className="font-bengali-serif font-bold">স্বাক্ষর: অবিনাশ মিত্র</span>
+                    <span className="text-[#991B1B] font-bold">MOTIVE CONFIRMED // LALBAZAR</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* ========================================================================
+            TAB 4: SUBMIT FINAL VERDICT (খুনি শনাক্ত করুন)
+           ======================================================================== */}
+        {activeTab === 'verdict' && (
+          <section className="max-w-2xl mx-auto">
+            <div className="bg-[#1C1917] border border-stone-700 p-1.5 shadow-2xl">
+              <div className="border border-stone-600/80 bg-[#141210] p-6 sm:p-8">
+                {/* Double Bordered Police Header */}
+                <div className="flex items-center justify-between gap-3 pb-4 border-b-2 border-double border-stone-700 mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 bg-[#1C1917] border border-[#991B1B] flex items-center justify-center shrink-0">
+                      <Skull className="w-5 h-5 text-[#991B1B]" />
+                    </div>
+                    <div>
+                      <span className="font-cinzel text-xs text-[#D97706] uppercase tracking-[0.2em] font-bold block">
+                        FINAL CHARGE SHEET // CASE #2026/01
+                      </span>
+                      <h2 className="font-bengali-serif text-xl font-bold text-[#F4EFE6]">
+                        চূড়ান্ত তদন্ত রিপোর্ট জমা দিন
+                      </h2>
+                    </div>
+                  </div>
+                  <div className="hidden sm:block ink-stamp font-jetbrains text-[9px] font-bold px-2 py-0.5">
+                    LALBAZAR HQ
+                  </div>
+                </div>
+
+                <form onSubmit={handleVerdictSubmit} className="space-y-5">
+                  {/* 1. Select Killer */}
+                  <div>
+                    <label className="block font-bengali-serif text-sm font-bold text-[#F4EFE6] mb-2">
+                      ১. প্রকৃত খুনি কে? <span className="font-jetbrains text-xs text-stone-400 font-normal">(IDENTIFY THE KILLER)</span>
+                    </label>
+                    <select
+                      value={selectedKiller}
+                      onChange={(e) => {
+                        setSelectedKiller(e.target.value);
+                        setVerdictResult(null);
+                      }}
+                      className="w-full bg-[#0D0D0D] border border-stone-700 focus:border-[#D97706] rounded-none px-4 py-3 font-bengali-serif text-sm text-[#F4EFE6] focus:outline-none"
+                      required
+                    >
+                      <option value="">-- সন্দেহভাজন নির্বাচন করুন --</option>
+                      <option value="রাহুল মিত্র">রাহুল মিত্র (ছেলে)</option>
+                      <option value="ডাঃ সুমিতা সেন">ডাঃ সুমিতা সেন (পারিবারিক চিকিৎসক)</option>
+                      <option value="অনিমেষ বসু">অনিমেষ বসু (বিজনেস পার্টনার)</option>
+                      <option value="তানিয়া রায়">তানিয়া রায় (পার্সোনাল সেক্রেটারি)</option>
+                      <option value="বিমল দা">বিমল দা (কেয়ারটেকার)</option>
+                    </select>
+                  </div>
+
+                  {/* 2. Select True Murder Method */}
+                  <div>
+                    <label className="block font-bengali-serif text-sm font-bold text-[#F4EFE6] mb-2">
+                      ২. হত্যার আসল পদ্ধতি কী ছিল? <span className="font-jetbrains text-xs text-stone-400 font-normal">(TRUE MURDER METHOD)</span>
+                    </label>
+                    <select
+                      value={selectedWeapon}
+                      onChange={(e) => {
+                        setSelectedWeapon(e.target.value);
+                        setVerdictResult(null);
+                      }}
+                      className="w-full bg-[#0D0D0D] border border-stone-700 focus:border-[#D97706] rounded-none px-4 py-3 font-bengali-serif text-sm text-[#F4EFE6] focus:outline-none"
+                      required
+                    >
+                      <option value="">-- হত্যার পদ্ধতি নির্বাচন করুন --</option>
+                      <option value="brass_vase">
+                        ভারী পিতলের ফুলদানি দিয়ে মাথায় আঘাত (Blunt Force Trauma)
+                      </option>
+                      <option value="poison_milk">
+                        গরম দুধে ভেষজ বিষ Aconite মিশিয়ে (Poison/Aconite in Warm Milk)
+                      </option>
+                      <option value="strangulation">
+                        শ্বাসরোধ করে হত্যা (Strangulation)
+                      </option>
+                      <option value="overdose">
+                        ঘুমের ওষুধের ওভারডোজ (Sleeping Pill Overdose)
+                      </option>
+                    </select>
+                  </div>
+
+                  {/* 3. Select Exact Time of Death */}
+                  <div>
+                    <label className="block font-bengali-serif text-sm font-bold text-[#F4EFE6] mb-2">
+                      ৩. মৃত্যুর সঠিক সময় কোনটি? <span className="font-jetbrains text-xs text-stone-400 font-normal">(EXACT TIME OF DEATH)</span>
+                    </label>
+                    <select
+                      value={selectedTime}
+                      onChange={(e) => {
+                        setSelectedTime(e.target.value);
+                        setVerdictResult(null);
+                      }}
+                      className="w-full bg-[#0D0D0D] border border-stone-700 focus:border-[#D97706] rounded-none px-4 py-3 font-bengali-serif text-sm text-[#F4EFE6] focus:outline-none"
+                      required
+                    >
+                      <option value="">-- সঠিক সময় নির্বাচন করুন --</option>
+                      <option value="10:30 PM">10:30 PM (বিমল দার দুধ দেওয়ার সময়)</option>
+                      <option value="10:40 PM">10:40 PM (ভাঙা দেয়াল ঘড়ির কাঁটা অনুযায়ী)</option>
+                      <option value="10:45 PM">10:45 PM (শেষ WhatsApp মেসেজের সময়)</option>
+                      <option value="11:00 PM">11:00 PM (লোডশেডিংয়ের ২০ মিনিট যোগ করে)</option>
+                    </select>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-[#991B1B] hover:bg-[#7F1D1D] border border-red-400/30 text-[#F4EFE6] font-cinzel font-bold text-sm tracking-[0.2em] uppercase py-3.5 rounded-none shadow-lg transition cursor-pointer"
+                  >
+                    SUBMIT OFFICIAL VERDICT
+                  </button>
+                </form>
+
+                {/* VERDICT RESULT FEEDBACK */}
+                {verdictResult === 'SUCCESS' && (
+                  <div className="mt-6 bg-[#F4EFE6] text-stone-900 border-2 border-stone-500 p-6 space-y-3">
+                    <div className="flex items-center justify-between border-b-2 border-double border-stone-400 pb-3">
+                      <div className="flex items-center gap-2 text-emerald-800">
+                        <CheckCircle2 className="w-6 h-6" />
+                        <span className="font-cinzel text-xs sm:text-sm font-extrabold tracking-widest uppercase">
+                          CASE CLOSED - CONGRATULATIONS DETECTIVE
+                        </span>
+                      </div>
+                      <span className="ink-stamp font-jetbrains text-[9px] font-bold px-2 py-0.5">
+                        SOLVED
+                      </span>
+                    </div>
+
+                    <h3 className="font-bengali-serif text-xl font-bold text-stone-900">
+                      অভিনন্দন গোয়েন্দা! রহস্যের সম্পূর্ণ সমাধান হয়েছে।
+                    </h3>
+
+                    <div className="font-bengali-serif text-xs sm:text-sm text-stone-800 leading-relaxed space-y-2 bg-stone-200/70 p-4 border border-stone-300">
+                      <p>
+                        <strong>১. সময়ের ধাঁধা:</strong> সন্ধ্যা ৭:০০ টায় ২০ মিনিটের লোডশেডিং হওয়ায় ইলেকট্রিক দেয়াল ঘড়িটি ২০ মিনিট স্লো চলছিল। তাই ঘড়িটি ১০:৪০ PM-এ ভাঙলেও আসল সময় ছিল{' '}
+                        <strong className="text-[#991B1B]">১১:০০ PM</strong> (যে কারণে অবিনাশ বাবু ১০:৪৫ PM-এ জীবিত অবস্থায় উকিলকে মেসেজ পাঠাতে পেরেছিলেন)।
+                      </p>
+                      <p>
+                        <strong>২. হত্যার পদ্ধতি:</strong> মাথার আঘাতটি মৃত্যুর পরে সাজানো হয়েছিল। আসল মৃত্যু হয়েছে গরম দুধে মেশানো{' '}
+                        <strong className="text-[#991B1B]">Aconite বিষে</strong>।
+                      </p>
+                      <p>
+                        <strong>৩. খুনি শনাক্তকরণ:</strong> নতুন উইল সই হলে পুরনো উইলের ২ কোটি টাকা হাতছাড়া হয়ে যেত—এই ভয়েই পার্সোনাল সেক্রেটারি{' '}
+                        <strong className="text-[#991B1B]">তানিয়া রায়</strong> দুধে বিষ মেশান। ডায়েরিতে লেখা বাঁ হাতের অনামিকার রুপোর আংটিটিও তাঁরই ছিল!
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {verdictResult === 'FAILURE' && (
+                  <div className="mt-6 bg-[#991B1B]/20 border-2 border-[#991B1B] p-5 text-center space-y-2">
+                    <div className="inline-flex items-center justify-center w-10 h-10 bg-[#991B1B]/30 border border-[#991B1B] text-red-300">
+                      <XCircle className="w-6 h-6" />
+                    </div>
+                    <div className="font-cinzel text-sm font-bold text-red-300 tracking-[0.18em] uppercase">
+                      ACCESS DENIED / INCORRECT DEDUCTION
+                    </div>
+                    <p className="font-bengali-serif text-xs sm:text-sm text-stone-300">
+                      আপনার তথ্যে ভুল রয়েছে! প্রমাণপত্রগুলো (বিশেষত লোডশেডিংয়ের সময়, ময়নাতদন্ত রিপোর্ট এবং ডায়েরির আংটির বর্ণনা) আবার ভালো করে যাচাই করুন।
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+      </main>
+
+      {/* ========================================================================
+          TACTILE EVIDENCE DOSSIER MODAL
+         ======================================================================== */}
+      {selectedEvidence && (
+        <div
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setSelectedEvidence(null)}
+        >
+          <div
+            className="w-full max-w-2xl bg-[#1C1917] border-2 border-stone-600 rounded-none shadow-[0_30px_90px_rgba(0,0,0,0.95)] overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Police Archive Top Header */}
+            <div className="bg-[#12100E] border-b-2 border-double border-stone-700 px-5 py-3.5 flex items-center justify-between">
+              <div className="flex flex-wrap items-center gap-2 font-jetbrains text-xs">
+                <span className="px-2 py-0.5 bg-[#991B1B]/20 border border-[#991B1B] text-red-300 font-bold">
+                  {selectedEvidence.code}
+                </span>
+                <span className="text-[#D97706] tracking-wider">{selectedEvidence.tag}</span>
+              </div>
+              <button
+                onClick={() => setSelectedEvidence(null)}
+                className="p-1.5 bg-[#1C1917] hover:bg-[#991B1B] border border-stone-700 text-stone-300 hover:text-white transition cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 sm:p-7 max-h-[82vh] overflow-y-auto space-y-5">
+              {/* Crisp Double-Border Police Report Title Block */}
+              <div className="border-2 border-double border-stone-600 bg-[#141210] p-4 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="font-jetbrains text-[11px] text-[#D97706] tracking-widest">
+                    {selectedEvidence.timestamp}
+                  </p>
+                  <h3 className="font-bengali-serif text-lg sm:text-xl font-bold text-[#F4EFE6] mt-0.5">
+                    {selectedEvidence.title}
+                  </h3>
+                </div>
+                <div className="ink-stamp font-jetbrains text-[9px] font-bold px-2.5 py-1 bg-[#F4EFE6] -rotate-2">
+                  CONFIDENTIAL / LALBAZAR ARCHIVE
+                </div>
+              </div>
+
+              {/* Special Visual Highlight for Broken Wall Clock */}
+              {selectedEvidence.visualType === 'clock' && (
+                <div className="bg-[#141210] border border-stone-700 p-4 flex flex-col sm:flex-row items-center gap-4">
+                  <div className="w-24 h-24 rounded-full border-4 border-[#D97706]/80 bg-[#0D0D0D] flex flex-col items-center justify-center relative shrink-0">
+                    <Clock className="w-5 h-5 text-[#991B1B] mb-1" />
+                    <span className="font-jetbrains text-sm font-bold text-[#F4EFE6]">10:40</span>
+                    <span className="font-jetbrains text-[9px] text-[#991B1B] font-bold">
+                      HALTED
+                    </span>
+                  </div>
+                  <div className="text-xs sm:text-sm space-y-1">
+                    <div className="font-jetbrains text-xs text-[#D97706] font-bold tracking-wider">
+                      FORENSIC EXHIBIT #C-04 // ANALOG ELECTRIC CLOCK
+                    </div>
+                    <p className="font-bengali-serif text-stone-300 leading-relaxed">
+                      স্টাডি রুমের ইলেকট্রিক ঘড়িটি মেঝেতে পড়ে ভেঙে গেছে। কাঁটা{' '}
+                      <strong className="text-[#D97706]">১০:৪০ PM</strong>-এ স্থির হয়ে আছে।
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Special Visual Highlight for WhatsApp Forensic Log */}
+              {selectedEvidence.visualType === 'whatsapp' && (
+                <div className="bg-[#12100E] border border-stone-700 p-4 space-y-2">
+                  <div className="flex items-center justify-between text-[11px] font-jetbrains text-[#D97706] border-b border-stone-800 pb-2">
+                    <span>TELECOM INTERCEPT // WHATSAPP LOG</span>
+                    <span>DELIVERED: 22:45 HRS [READ]</span>
+                  </div>
+                  <div className="bg-[#F4EFE6] text-stone-900 font-bengali-serif text-xs sm:text-sm p-3.5 border-l-4 border-[#991B1B]">
+                    "অরুণাভ, আমি চূড়ান্ত সিদ্ধান্ত নিয়ে নিয়েছি। পুরনো উইলটা বাতিল করতে হবে। আগামীকাল অর্থাৎ ১লা জানুয়ারি সকাল ১০টায় নতুন উইলের কাগজপত্র নিয়ে মিত্র নিবাসে চলে এসো। আমি সই করে দেব। সব সম্পত্তি একমাত্র রাহুলই পাবে।"
+                    <div className="text-[10px] text-stone-600 text-right font-jetbrains mt-1.5 font-bold">
+                      TIMESTAMP: 10:45 PM // VERIFIED
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TACTILE DOCUMENT RENDERING BASED ON ARTIFACT TYPE */}
+              {selectedEvidence.visualType === 'diary' ? (
+                /* 1. Lined Notebook Paper with Slight Rotation (-rotate-1) for Killer's Diary */
+                <div className="py-2 px-1">
+                  <div className="lined-notebook text-stone-900 border border-stone-400 shadow-2xl p-6 sm:p-8 -rotate-1 relative mx-auto">
+                    {/* Red Notebook Margin Line */}
+                    <div className="hidden sm:block absolute top-0 bottom-0 left-10 w-[1.5px] bg-[#991B1B]/45" />
+                    <div className="sm:pl-8">
+                      <div className="flex items-center justify-between border-b border-stone-400 pb-1 mb-3 font-jetbrains text-[10px] text-[#991B1B] font-bold uppercase tracking-widest">
+                        <span>EXHIBIT #G // CHARRED DIARY LEAF</span>
+                        <span>31 DEC 1995</span>
+                      </div>
+                      <p className="font-tiro italic text-base sm:text-lg text-stone-900 whitespace-pre-wrap">
+                        {selectedEvidence.content}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ) : selectedEvidence.visualType === 'receipt' ? (
+                /* 2. Faded Thermal / Carbon Paper Bill with Monospace Alignment for Receipt */
+                <div className="thermal-paper text-stone-900 border-2 border-dashed border-stone-500 p-5 sm:p-6 shadow-inner relative">
+                  <div className="text-center border-b border-dashed border-stone-500 pb-3 mb-4 font-jetbrains">
+                    <div className="text-xs font-bold tracking-[0.2em] uppercase">
+                      *** CASH MEMO / SERVICE VOUCHER ***
+                    </div>
+                    <div className="text-[10px] text-stone-600 mt-0.5">
+                      CARBON COPY // SHYAMBAZAR, CALCUTTA
+                    </div>
+                  </div>
+                  <pre className="whitespace-pre-wrap font-jetbrains text-xs sm:text-sm text-stone-900 leading-relaxed">
+                    {selectedEvidence.content}
+                  </pre>
+                  <div className="mt-4 pt-2 border-t border-dashed border-stone-500 flex justify-between font-jetbrains text-[10px] text-stone-600">
+                    <span>PAID IN CASH</span>
+                    <span>STAMP: ROYAL ELECTRICALS</span>
+                  </div>
+                </div>
+              ) : (
+                /* 3. Aged Parchment Printed Police Dossier for Statements, Autopsy & Notes */
+                <div className="bg-[#F4EFE6] text-stone-900 border border-stone-400 p-5 sm:p-6 relative shadow-inner">
+                  <div className="pointer-events-none absolute bottom-3 right-4 ink-stamp font-jetbrains text-[9px] font-bold px-2 py-0.5 -rotate-3 opacity-75">
+                    CONFIDENTIAL / LALBAZAR ARCHIVE
+                  </div>
+                  <pre className="whitespace-pre-wrap font-bengali-serif text-sm sm:text-base text-stone-900 leading-relaxed">
+                    {selectedEvidence.content}
+                  </pre>
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-[#12100E] border-t border-stone-800 px-5 py-3 flex justify-end">
+              <button
+                onClick={() => setSelectedEvidence(null)}
+                className="px-5 py-2 bg-[#1C1917] hover:bg-[#991B1B] border border-stone-600 hover:border-[#991B1B] text-[#F4EFE6] font-jetbrains text-xs tracking-wider uppercase rounded-none transition cursor-pointer"
+              >
+                RETURN TO ARCHIVE
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
